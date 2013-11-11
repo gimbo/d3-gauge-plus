@@ -53,8 +53,6 @@ function Gauge(placeholderName, configuration) {
     this.renderRegions();
     this.renderTicks();
     this.renderPointer();
-
-    this.redraw(this.config.min, 5000);
   };
 
   this.renderDisk = function() {
@@ -124,36 +122,34 @@ function Gauge(placeholderName, configuration) {
 
   this.renderPointer = function() {
     var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
-    var midValue = (this.config.min + this.config.max) / 2;
-    console.log(midValue);
-    var pointerPath = this.buildPointerPath(midValue);
-    console.log(pointerPath);
+    this.pointerValue = (this.config.min + this.config.max) / 2;
+    var pointerPath = this.buildPointerPath(this.pointerValue);
     var pointerLine = d3.svg.line()
                   .x(function(d) { return d.x })
                   .y(function(d) { return d.y })
                   .interpolate("basis");
-    pointerContainer.selectAll("path")
-              .data([pointerPath])
-              .enter()
-                .append("svg:path")
-                  .attr("d", pointerLine)
-                  .style("fill", "#dc3912")
-                  .style("stroke", "#c63310")
-                  .style("fill-opacity", 0.7);
+    var pointer = pointerContainer.selectAll("path");
+    pointer.data([pointerPath])
+      .enter()
+      .append("svg:path")
+      .attr("d", pointerLine)
+      .style("fill", "#dc3912")
+      .style("stroke", "#c63310")
+      .style("fill-opacity", 0.7);
   };
 
   this.buildPointerPath = function(value) {
     var thinness = 13;
     var delta = this.config.range / thinness;
 
-    var head = valueToPoint(value, 0.85);
-    var head1 = valueToPoint(value - delta, 0.12);
-    var head2 = valueToPoint(value + delta, 0.12);
+    var head = this.valueToPoint(value, 0.85);
+    var head1 = this.valueToPoint(value - delta, 0.12);
+    var head2 = this.valueToPoint(value + delta, 0.12);
 
     var tailValue = value - (this.config.range * (1/(270/360)) / 2);
-    var tail = valueToPoint(tailValue, 0.28);
-    var tail1 = valueToPoint(tailValue - delta, 0.12);
-    var tail2 = valueToPoint(tailValue + delta, 0.12);
+    var tail = this.valueToPoint(tailValue, 0.28);
+    var tail1 = this.valueToPoint(tailValue - delta, 0.12);
+    var tail2 = this.valueToPoint(tailValue + delta, 0.12);
 
     return [head, head1, tail2, tail, tail1, head2, head];
 
@@ -181,29 +177,25 @@ function Gauge(placeholderName, configuration) {
           });
   };
 
-  this.redraw = function(value, transitionDuration) {
-    var pointer = this.body.select(".pointerContainer").selectAll("path");
-    var duration = undefined != transitionDuration ? transitionDuration : this.config.transitionDuration;
-    pointer.transition()
-      .duration(duration)
-      //.delay(500)
-      //.ease("linear")
-      //.attr("transform", function(d)
-      .attrTween("transform", function() {
-        var pointerValue = value;
-        if (value > self.config.max) {
-          pointerValue = self.config.max + 0.02 * self.config.range;
-        } else if (value < self.config.min) {
-          pointerValue = self.config.min - 0.02 * self.config.range;
-        }
-        var targetRotation = (self.valueToDegrees(pointerValue) - 90);
-        var currentRotation = self._currentRotation || targetRotation;
-        self._currentRotation = targetRotation;
-        return function(step) {
-          var rotation = currentRotation + (targetRotation-currentRotation)*step;
-          return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(" + rotation + ")";
-        };
-      });
+  this.setPointer = function(newValue, duration) {
+    // Clamp new value within range.
+    if (newValue > self.config.max) {
+      newValue = self.config.max + 0.02 * self.config.range;
+    } else if (newValue < self.config.min) {
+      newValue = self.config.min - 0.02 * self.config.range;
+    }
+    if (undefined === duration) {
+      duration = this.config.transitionDuration;
+    }
+    var oldAngle = (self.valueToDegrees(this.pointerValue) - 90);
+    var newAngle = (self.valueToDegrees(newValue) - 90);
+    this.pointerValue = newValue;
+    this.rotateElement(this.body.select(".pointerContainer").selectAll("path"),
+                       oldAngle,
+                       newAngle,
+                       self.config.cx,
+                       self.config.cy,
+                       duration);
   };
 
   this.valueToDegrees = function(value) {
@@ -244,6 +236,18 @@ function Gauge(placeholderName, configuration) {
       .style("font-size", fontSize + "px")
       .style("fill", color)
       .style("stroke-width", "0px");
+  };
+
+  this.rotateElement = function(element, fromAngle, toAngle, centre_x, centre_y, duration) {
+    element
+      .transition()
+      .duration(duration)
+      .attrTween("transform", function() {
+        return function(step) {
+          var dest = fromAngle + (toAngle - fromAngle) * step;
+          return "rotate("+ dest +","+ centre_x + ","+ centre_y +")";
+        };
+      });
   };
 
   // initialization
