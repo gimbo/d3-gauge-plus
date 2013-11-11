@@ -54,6 +54,7 @@ function Gauge(placeholderName, configuration) {
     this.renderRegions();
     this.renderTicks();
     this.renderPointer();
+    this.setPointer(this.config.initial, 0);
   };
 
   this.renderDisk = function() {
@@ -125,6 +126,7 @@ function Gauge(placeholderName, configuration) {
     var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
     // XXX Rotation bugs if we start anywhere other than 0 (or is it mid point?)
     this.pointerValue = (this.config.min + this.config.max) / 2;
+    this.pointerAngle = 0; // XXX Bluergh
     var pointerPath = this.buildPointerPath(this.pointerValue);
     var pointerLine = d3.svg.line()
                   .x(function(d) { return d.x })
@@ -181,17 +183,22 @@ function Gauge(placeholderName, configuration) {
 
   this.setPointer = function(newValue, duration) {
     // Clamp new value within range.
+    var valueForAngle;
     if (newValue > self.config.max) {
-      newValue = self.config.max + 0.02 * self.config.range;
+      valueForAngle = self.config.max + 0.02 * self.config.range;
     } else if (newValue < self.config.min) {
-      newValue = self.config.min - 0.02 * self.config.range;
+      valueForAngle = self.config.min - 0.02 * self.config.range;
+    } else {
+      valueForAngle = newValue;
     }
     if (undefined === duration) {
       duration = this.config.transitionDuration;
     }
-    var oldAngle = (self.valueToDegrees(this.pointerValue) - 90);
-    var newAngle = (self.valueToDegrees(newValue) - 90);
+    var oldAngle = this.pointerAngle; // (self.valueToDegrees(this.pointerValue) - 90);
+    var newAngle = self.valueToDegrees(valueForAngle) - 90;
+    console.log("oldValue", this.pointerValue, "newValue", newValue, "valueForAngle", valueForAngle, "oldAngle", oldAngle, "newAngle", newAngle);
     this.pointerValue = newValue;
+    this.pointerAngle = newAngle;
     this.rotateElement(this.body.select(".pointerContainer").selectAll("path"),
                        oldAngle,
                        newAngle,
