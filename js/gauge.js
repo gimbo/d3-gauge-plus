@@ -91,7 +91,7 @@ function Gauge(placeholderName, configuration) {
       }
 
       var point1 = this.valueToPoint(major, 0.7);
-      var point2 = this.valueToPoint(major, 0.85);  
+      var point2 = this.valueToPoint(major, 0.85);
 
       this.body.append("svg:line")
             .attr("x1", point1.x)
@@ -136,14 +136,6 @@ function Gauge(placeholderName, configuration) {
                   .style("stroke", "#c63310")
                   .style("fill-opacity", 0.7);
 
-    pointerContainer.append("svg:circle")
-              .attr("cx", this.config.cx)
-              .attr("cy", this.config.cy)
-              .attr("r", 0.12 * this.config.raduis)
-              .style("fill", "#4684EE")
-              .style("stroke", "#666")
-              .style("opacity", 1);
-
     this.redraw(this.config.min, 0);
   };
 
@@ -180,7 +172,9 @@ function Gauge(placeholderName, configuration) {
             .endAngle(this.valueToRadians(end))
             .innerRadius(0.65 * this.config.raduis)
             .outerRadius(0.85 * this.config.raduis))
-          .attr("transform", function() { return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)" });
+          .attr("transform", function() {
+            return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)";
+          });
   };
 
   this.redraw = function(value, transitionDuration) {
