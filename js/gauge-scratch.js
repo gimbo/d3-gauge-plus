@@ -28,7 +28,7 @@ var gauge_scratch = function() {
     initialize : function() {
       tcasGauge = createGauge("tcas", -6, 6);
       tcasGauge.render();
-      updateGauge(tcasGauge);
+      // updateGauge(tcasGauge);
       setInterval(function() { updateGauge(tcasGauge); }, 3000);
     }
   };

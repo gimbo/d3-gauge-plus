@@ -144,19 +144,6 @@ function Gauge(placeholderName, configuration) {
               .style("stroke", "#666")
               .style("opacity", 1);
 
-    var fontSize = Math.round(this.config.size / 10);
-    pointerContainer.selectAll("text")
-              .data([midValue])
-              .enter()
-                .append("svg:text")
-                  .attr("x", this.config.cx)
-                  .attr("y", this.config.size - this.config.cy / 4 - fontSize)
-                  .attr("dy", fontSize / 2)
-                  .attr("text-anchor", "middle")
-                  .style("font-size", fontSize + "px")
-                  .style("fill", "#000")
-                  .style("stroke-width", "0px");
-
     this.redraw(this.config.min, 0);
   };
 
@@ -197,11 +184,7 @@ function Gauge(placeholderName, configuration) {
   };
 
   this.redraw = function(value, transitionDuration) {
-    var pointerContainer = this.body.select(".pointerContainer");
-
-    pointerContainer.selectAll("text").text(Math.round(value));
-
-    var pointer = pointerContainer.selectAll("path");
+    var pointer = this.body.select(".pointerContainer").selectAll("path");
     pointer.transition()
           .duration(undefined != transitionDuration ? transitionDuration : this.config.transitionDuration)
           //.delay(0)
