@@ -73,19 +73,6 @@ function Gauge(placeholderName, configuration) {
       this.drawBand(this.config.redZones[index].from, this.config.redZones[index].to, self.config.redColor);
     }
 
-    if (undefined != this.config.label) {
-      var fontSize = Math.round(this.config.size / 9);
-      this.body.append("svg:text")
-            .attr("x", this.config.cx)
-            .attr("y", this.config.cy / 2 + fontSize / 2)
-            .attr("dy", fontSize / 2)
-            .attr("text-anchor", "middle")
-            .text(this.config.label)
-            .style("font-size", fontSize + "px")
-            .style("fill", "#333")
-            .style("stroke-width", "0px");
-    }
-
     var fontSize = Math.round(this.config.size / 16);
     var majorDelta = this.config.range / (this.config.majorTicks - 1);
     for (var major = this.config.min; major <= this.config.max; major += majorDelta) {

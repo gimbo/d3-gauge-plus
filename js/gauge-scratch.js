@@ -2,10 +2,9 @@ var gauge_scratch = function() {
 
   var tcasGauge;
 
-  function createGauge(name, label, min, max) {
+  function createGauge(name, min, max) {
     var config = {
       size: 500,
-      label: label,
       min: undefined != min ? min : 0,
       max: undefined != max ? max : 100,
       minorTicks: 5
@@ -30,7 +29,7 @@ var gauge_scratch = function() {
 
   return {
     initialize : function() {
-      tcasGauge = createGauge("tcas", undefined, -6, 6);
+      tcasGauge = createGauge("tcas", -6, 6);
       tcasGauge.render();
       updateGauge(tcasGauge);
       setInterval(function() { updateGauge(tcasGauge); }, 3000);
