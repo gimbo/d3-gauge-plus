@@ -24,6 +24,13 @@ function Gauge(placeholderName, configuration) {
     this.config.yellowColor = configuration.yellowColor || "#FF9900";
     this.config.redColor   = configuration.redColor || "#DC3912";
 
+    this.config.innerStrokeColor = configuration.innerStrokeColor || "#e0e0e0";
+    this.config.innerFillColor = configuration.innerFillColor || "#fff";
+
+    this.config.drawOuterCircle = configuration.drawOuterCircle || false;
+    this.config.outerStrokeColor = configuration.outerStrokeColor || "#000";
+    this.config.outerFillColor = configuration.outerFillColor || "#ccc";
+
     this.config.transitionDuration = configuration.transitionDuration || 500;
   };
 
@@ -34,21 +41,25 @@ function Gauge(placeholderName, configuration) {
               .attr("width", this.config.size)
               .attr("height", this.config.size);
 
-    this.body.append("svg:circle")
-          .attr("cx", this.config.cx)
-          .attr("cy", this.config.cy)
-          .attr("r", this.config.raduis)
-          .style("fill", "#ccc")
-          .style("stroke", "#000")
-          .style("stroke-width", "0.5px");
+    // Outer circle
+    if (this.config.drawOuterCircle) {
+      this.body.append("svg:circle")
+            .attr("cx", this.config.cx)
+            .attr("cy", this.config.cy)
+            .attr("r", this.config.raduis)
+            .style("fill", this.config.outerFillColor)
+            .style("stroke", this.config.outerStrokeColor)
+            .style("stroke-width", "0.5px");
+    }
 
+    // Inner circle
     this.body.append("svg:circle")
           .attr("cx", this.config.cx)
           .attr("cy", this.config.cy)
           .attr("r", 0.9 * this.config.raduis)
-          .style("fill", "#fff")
-          .style("stroke", "#e0e0e0")
-          .style("stroke-width", "2px");
+          .style("fill", this.config.innerFillColor)
+          .style("stroke", this.config.innerStrokeColor)
+          .style("stroke-width", "0.5px");
 
     for (var index in this.config.greenZones) {
       this.drawBand(this.config.greenZones[index].from, this.config.greenZones[index].to, self.config.greenColor);
