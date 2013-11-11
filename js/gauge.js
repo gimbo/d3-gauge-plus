@@ -18,7 +18,7 @@ function Gauge(placeholderName, configuration) {
     this.config.range = this.config.max - this.config.min;
     this.config.initial = undefined != configuration.initial ? configuration.initial : (this.config.min + this.config.max) / 2;;
 
-    this.config.majorTicks = configuration.majorTicks || 13;
+    this.config.majorTicks = configuration.majorTicks || this.config.range + 1;
     this.config.majorTickColor = configuration.majorTickColor || "#333";
     this.config.majorTickWidth = configuration.majorTickWidth || "2px";
 
@@ -114,8 +114,8 @@ function Gauge(placeholderName, configuration) {
       // Render number for min and max values.
       if (true || major == this.config.min || major == this.config.max) {
         this.drawText(this.valueToPoint(major, 0.58),
-                      major,
-                      Math.round(this.config.size / 16),
+                      parseFloat(major.toFixed(2)),
+                      Math.round(this.config.size / 20),
                       this.config.majorTickColor);
       }
     }
