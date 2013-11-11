@@ -6,15 +6,14 @@
     <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="css/styles.css" type="text/css" media="screen" />
     <script src="js/d3.v3.min.js" charset="utf-8"></script>
+    <script src="js/gauge.js" charset="utf-8"></script>
+    <script src="js/gauge-scratch.js" charset="utf-8"></script>
     <title>Gauge scratch</title>
   </head>
-  <body>
-    <h1>Gauge scratch</h1>
-    <div id="canvas" class="canvas">
-      <canvas class="scratch" width="500" height="500"></canvas>
-    </div>
-    <div>
-      <img src="img/TCAS%20gauge%20sample.png" alt="TCAS gauge sample" />
-    </div>
+  <body onload="initialize()">
+    <span id="memoryGaugeContainer"></span>
+    <span id="cpuGaugeContainer"></span>
+    <span id="networkGaugeContainer"></span>
+    <span id="testGaugeContainer"></span>
   </body>
 </html>
