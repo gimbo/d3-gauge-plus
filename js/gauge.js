@@ -13,12 +13,12 @@ function Gauge(placeholderName, configuration) {
     this.config.cx = this.config.size / 2;
     this.config.cy = this.config.size / 2;
 
-    this.config.min = undefined != configuration.min ? configuration.min : 0;
-    this.config.max = undefined != configuration.max ? configuration.max : 100;
+    this.config.min = undefined != configuration.min ? configuration.min : -6;
+    this.config.max = undefined != configuration.max ? configuration.max : 6;
     this.config.range = this.config.max - this.config.min;
 
-    this.config.majorTicks = configuration.majorTicks || 5;
-    this.config.minorTicks = configuration.minorTicks || 2;
+    this.config.majorTicks = configuration.majorTicks || 13;
+    this.config.minorTicks = configuration.minorTicks || 5;
 
     this.config.greenColor   = configuration.greenColor || "#109618";
     this.config.yellowColor = configuration.yellowColor || "#FF9900";

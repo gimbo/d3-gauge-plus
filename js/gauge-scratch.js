@@ -5,9 +5,6 @@ var gauge_scratch = function() {
   function createGauge(name, min, max) {
     var config = {
       size: 500,
-      min: undefined != min ? min : 0,
-      max: undefined != max ? max : 100,
-      minorTicks: 5
     };
 
     var gauge;
