@@ -8,7 +8,7 @@ var gauge_scratch = function() {
       size: 500,
       min: undefined != min ? min : -6,
       max: undefined != max ? max : 6,
-      rotation: 90
+      rotation: 0
     };
 
     var gauge;
@@ -41,7 +41,7 @@ var gauge_scratch = function() {
       tcasGauge = createGauge("tcas", -6, 6);
       tcasGauge.render();
       // updateGauge(tcasGauge);
-      setInterval(tick, 1000);
+      //setInterval(tick, 1000);
     }
   };
 

@@ -18,7 +18,12 @@ function Gauge(placeholderName, configuration) {
     this.config.range = this.config.max - this.config.min;
 
     this.config.majorTicks = configuration.majorTicks || 13;
+    this.config.majorTickColor = configuration.majorTickColor || "#333";
+    this.config.majorTickWidth = configuration.majorTickWidth || "2px";
+
     this.config.minorTicks = configuration.minorTicks || 5;
+    this.config.minorTickColor = configuration.majorTickColor || "#666";
+    this.config.minorTickWidth = configuration.minorTickWidth || "1px";
 
     this.config.greenColor   = configuration.greenColor || "#109618";
     this.config.yellowColor = configuration.yellowColor || "#FF9900";
@@ -44,6 +49,15 @@ function Gauge(placeholderName, configuration) {
               .attr("width", this.config.size)
               .attr("height", this.config.size);
 
+    this.renderDisk();
+    this.renderRegions();
+    this.renderTicks();
+    this.renderPointer();
+
+    this.redraw(this.config.min, 5000);
+  };
+
+  this.renderDisk = function() {
     // Outer circle
     if (this.config.drawOuterCircle) {
       this.body.append("svg:circle")
@@ -63,73 +77,61 @@ function Gauge(placeholderName, configuration) {
           .style("fill", this.config.innerFillColor)
           .style("stroke", this.config.innerStrokeColor)
           .style("stroke-width", "0.5px");
+  };
 
-    for (var index in this.config.greenZones) {
-      this.drawBand(this.config.greenZones[index].from, this.config.greenZones[index].to, self.config.greenColor);
-    }
-
-    for (var index in this.config.yellowZones) {
-      this.drawBand(this.config.yellowZones[index].from, this.config.yellowZones[index].to, self.config.yellowColor);
-    }
-
-    for (var index in this.config.redZones) {
-      this.drawBand(this.config.redZones[index].from, this.config.redZones[index].to, self.config.redColor);
-    }
-
-    var fontSize = Math.round(this.config.size / 16);
-    var majorDelta = this.config.range / (this.config.majorTicks - 1);
-    for (var major = this.config.min; major <= this.config.max; major += majorDelta) {
-      var minorDelta = majorDelta / this.config.minorTicks;
-      for (var minor = major + minorDelta; minor < Math.min(major + majorDelta, this.config.max); minor += minorDelta) {
-        var point1 = this.valueToPoint(minor, 0.75);
-        var point2 = this.valueToPoint(minor, 0.85);
-
-        this.body.append("svg:line")
-              .attr("x1", point1.x)
-              .attr("y1", point1.y)
-              .attr("x2", point2.x)
-              .attr("y2", point2.y)
-              .style("stroke", "#666")
-              .style("stroke-width", "1px");
-      }
-
-      var point1 = this.valueToPoint(major, 0.7);
-      var point2 = this.valueToPoint(major, 0.85);
-
-      this.body.append("svg:line")
-            .attr("x1", point1.x)
-            .attr("y1", point1.y)
-            .attr("x2", point2.x)
-            .attr("y2", point2.y)
-            .style("stroke", "#333")
-            .style("stroke-width", "2px");
-
-      if (major == this.config.min || major == this.config.max) {
-        var point = this.valueToPoint(major, 0.63);
-
-        this.body.append("svg:text")
-               .attr("x", point.x)
-               .attr("y", point.y)
-               .attr("dy", fontSize / 3)
-               .attr("text-anchor", major == this.config.min ? "start" : "end")
-               .text(major)
-               .style("font-size", fontSize + "px")
-              .style("fill", "#333")
-              .style("stroke-width", "0px");
+  this.renderRegions = function() {
+    function renderOneRegion(region, color) {
+      var i;
+      for (i in region) {
+        self.drawBand(region[i].from, region[i].to, color);
       }
     }
+    renderOneRegion(this.config.greenZones, this.config.greenColor);
+    renderOneRegion(this.config.yellowZones, this.config.yellowColor);
+    renderOneRegion(this.config.redZones, this.config.redColor);
+  };
 
+  this.renderTicks = function() {
+    var majorDelta;
+    var minorDelta;
+    var major;
+    var minor;
+    // Render major ticks.
+    majorDelta = this.config.range / (this.config.majorTicks - 1);
+    for (major = this.config.min; major <= this.config.max; major += majorDelta) {
+      // Render minor ticks.
+      minorDelta = majorDelta / this.config.minorTicks;
+      for (minor = major + minorDelta; minor < Math.min(major + majorDelta, this.config.max); minor += minorDelta) {
+        this.drawLine(this.valueToPoint(minor, 0.75),
+                      this.valueToPoint(minor, 0.85),
+                      this.config.minorTickColor,
+                      this.config.minorTickWidth);
+      }
+      this.drawLine(this.valueToPoint(major, 0.7),
+                    this.valueToPoint(major, 0.85),
+                    this.config.majorTickColor,
+                    this.config.majorTickWidth);
+
+      // Render number for min and max values.
+      if (true || major == this.config.min || major == this.config.max) {
+        this.drawText(this.valueToPoint(major, 0.58),
+                      major,
+                      Math.round(this.config.size / 16),
+                      this.config.majorTickColor);
+      }
+    }
+  };
+
+  this.renderPointer = function() {
     var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
-
     var midValue = (this.config.min + this.config.max) / 2;
-
+    console.log(midValue);
     var pointerPath = this.buildPointerPath(midValue);
-
+    console.log(pointerPath);
     var pointerLine = d3.svg.line()
                   .x(function(d) { return d.x })
                   .y(function(d) { return d.y })
                   .interpolate("basis");
-
     pointerContainer.selectAll("path")
               .data([pointerPath])
               .enter()
@@ -138,12 +140,11 @@ function Gauge(placeholderName, configuration) {
                   .style("fill", "#dc3912")
                   .style("stroke", "#c63310")
                   .style("fill-opacity", 0.7);
-
-    this.redraw(this.config.min, 0);
   };
 
   this.buildPointerPath = function(value) {
-    var delta = this.config.range / 13;
+    var thinness = 13;
+    var delta = this.config.range / thinness;
 
     var head = valueToPoint(value, 0.85);
     var head1 = valueToPoint(value - delta, 0.12);
@@ -182,23 +183,27 @@ function Gauge(placeholderName, configuration) {
 
   this.redraw = function(value, transitionDuration) {
     var pointer = this.body.select(".pointerContainer").selectAll("path");
+    var duration = undefined != transitionDuration ? transitionDuration : this.config.transitionDuration;
     pointer.transition()
-          .duration(undefined != transitionDuration ? transitionDuration : this.config.transitionDuration)
-          //.delay(0)
-          //.ease("linear")
-          //.attr("transform", function(d)
-          .attrTween("transform", function() {
-            var pointerValue = value;
-            if (value > self.config.max) pointerValue = self.config.max + 0.02*self.config.range;
-            else if (value < self.config.min) pointerValue = self.config.min - 0.02*self.config.range;
-            var targetRotation = (self.valueToDegrees(pointerValue) - 90);
-            var currentRotation = self._currentRotation || targetRotation;
-            self._currentRotation = targetRotation;
-            return function(step) {
-              var rotation = currentRotation + (targetRotation-currentRotation)*step;
-              return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(" + rotation + ")";
-            };
-          });
+      .duration(duration)
+      //.delay(500)
+      //.ease("linear")
+      //.attr("transform", function(d)
+      .attrTween("transform", function() {
+        var pointerValue = value;
+        if (value > self.config.max) {
+          pointerValue = self.config.max + 0.02 * self.config.range;
+        } else if (value < self.config.min) {
+          pointerValue = self.config.min - 0.02 * self.config.range;
+        }
+        var targetRotation = (self.valueToDegrees(pointerValue) - 90);
+        var currentRotation = self._currentRotation || targetRotation;
+        self._currentRotation = targetRotation;
+        return function(step) {
+          var rotation = currentRotation + (targetRotation-currentRotation)*step;
+          return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(" + rotation + ")";
+        };
+      });
   };
 
   this.valueToDegrees = function(value) {
@@ -217,6 +222,28 @@ function Gauge(placeholderName, configuration) {
       x: this.config.cx - this.config.raduis * factor * Math.cos(this.valueToRadians(value)),
       y: this.config.cy - this.config.raduis * factor * Math.sin(this.valueToRadians(value))
     };
+  };
+
+  this.drawLine = function(point1, point2, color, width) {
+    this.body.append("svg:line")
+      .attr("x1", point1.x)
+      .attr("y1", point1.y)
+      .attr("x2", point2.x)
+      .attr("y2", point2.y)
+      .style("stroke", color)
+      .style("stroke-width", width);
+  };
+
+  this.drawText = function(point, text, fontSize, color) {
+    this.body.append("svg:text")
+      .attr("x", point.x)
+      .attr("y", point.y)
+      .attr("dy", fontSize / 3)
+      .attr("text-anchor", "middle")
+      .text(text)
+      .style("font-size", fontSize + "px")
+      .style("fill", color)
+      .style("stroke-width", "0px");
   };
 
   // initialization
