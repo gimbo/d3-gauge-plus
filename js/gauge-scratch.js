@@ -2,11 +2,11 @@ var gauge_scratch = function() {
 
   var tcasGauge;
 
-  function createGauge(name, min, max) {
+  function createGauge(name, minValue, maxValue) {
     var config = {
       size: 500,
-      min: undefined != min ? min : -6,
-      max: undefined != max ? max : 6,
+      min: minValue,
+      max: maxValue,
       rotation: 0,
       transitionDuration: 200
     };
@@ -43,7 +43,7 @@ var gauge_scratch = function() {
 
   return {
     initialize : function() {
-      tcasGauge = createGauge("tcas", -6, 6);
+      tcasGauge = createGauge("tcas", -4, 6);
       tcasGauge.render();
       // tcasGauge.setPointer(-5, 0);
       setInterval(function() { tick(tcasGauge); }, 200);
