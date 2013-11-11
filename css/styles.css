@@ -1,0 +1,9 @@
+body, h1 {
+  font-face: "Helvetica Neue", Helvetica, Arial, serif;
+  font-weight: lighter;
+  font-size: 48px;
+}
+
+canvas.scratch {
+  border: 1px solid;
+}
