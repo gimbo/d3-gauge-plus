@@ -1,6 +1,6 @@
 var gauge_scratch = function() {
 
-  var gauges = [];
+  var tcasGauge;
 
   function createGauge(name, label, min, max) {
     var config = {
@@ -11,22 +11,16 @@ var gauge_scratch = function() {
       minorTicks: 5
     };
 
+    var gauge;
     var range = config.max - config.min;
     config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
     config.redZones = [{ from: config.min + range*0.9, to: config.max }];
-    gauges[name] = new Gauge(name + "GaugeContainer", config);
-    gauges[name].render();
+    return new Gauge(name + "GaugeContainer", config);
   }
 
-  function createGauges() {
-    createGauge("test", "");
-  }
-
-  function updateGauges() {
-    for (var key in gauges) {
-      var value = getRandomValue(gauges[key])
-      gauges[key].redraw(value);
-    }
+  function updateGauge(gauge) {
+    var value = getRandomValue(gauge);
+    gauge.redraw(value);
   }
 
   function getRandomValue(gauge) {
@@ -36,9 +30,10 @@ var gauge_scratch = function() {
 
   return {
     initialize : function() {
-      createGauges();
-      updateGauges();
-      setInterval(updateGauges, 3000);
+      tcasGauge = createGauge("tcas", undefined);
+      tcasGauge.render();
+      updateGauge(tcasGauge);
+      setInterval(function() { updateGauge(tcasGauge); }, 3000);
     }
   };
 
