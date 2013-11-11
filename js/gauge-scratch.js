@@ -2,7 +2,7 @@ var gauges = [];
 
 function createGauge(name, label, min, max) {
   var config = {
-    size: 120,
+    size: 400,
     label: label,
     min: undefined != min ? min : 0,
     max: undefined != max ? max : 100,
@@ -12,16 +12,12 @@ function createGauge(name, label, min, max) {
   var range = config.max - config.min;
   config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
   config.redZones = [{ from: config.min + range*0.9, to: config.max }];
-
   gauges[name] = new Gauge(name + "GaugeContainer", config);
   gauges[name].render();
 }
 
 function createGauges() {
-  createGauge("memory", "Memory");
-  createGauge("cpu", "CPU");
-  createGauge("network", "Network");
-  //createGauge("test", "Test", -50, 50 );
+  createGauge("test", "");
 }
 
 function updateGauges() {
@@ -38,5 +34,6 @@ function getRandomValue(gauge) {
 
 function initialize() {
   createGauges();
-  setInterval(updateGauges, 5000);
+  updateGauges();
+  setInterval(updateGauges, 3000);
 }
