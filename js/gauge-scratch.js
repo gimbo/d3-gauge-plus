@@ -1,12 +1,14 @@
 var gauge_scratch = function() {
 
   var tcasGauge;
+  var current = -6;
 
   function createGauge(name, min, max) {
     var config = {
       size: 500,
       min: undefined != min ? min : -6,
-      max: undefined != max ? max : 6
+      max: undefined != max ? max : 6,
+      rotation: 90
     };
 
     var gauge;
@@ -16,7 +18,7 @@ var gauge_scratch = function() {
     return new Gauge(name + "GaugeContainer", config);
   }
 
-  function updateGauge(gauge) {
+  function updateGaugeRandom(gauge) {
     var value = getRandomValue(gauge);
     gauge.redraw(value);
   }
@@ -26,12 +28,20 @@ var gauge_scratch = function() {
     return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
   }
 
+  function tick() {
+    current = current + 1;
+    if (current > 6) {
+      current = -6;
+    }
+    tcasGauge.redraw(current);
+  }
+
   return {
     initialize : function() {
       tcasGauge = createGauge("tcas", -6, 6);
       tcasGauge.render();
       // updateGauge(tcasGauge);
-      setInterval(function() { updateGauge(tcasGauge); }, 3000);
+      setInterval(tick, 1000);
     }
   };
 

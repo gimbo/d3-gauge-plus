@@ -31,6 +31,9 @@ function Gauge(placeholderName, configuration) {
     this.config.outerStrokeColor = configuration.outerStrokeColor || "#000";
     this.config.outerFillColor = configuration.outerFillColor || "#ccc";
 
+    // Offset gap degrees (anticlockwise).  0: gap at bottom; 90: gap at right.
+    this.config.rotation = configuration.rotation || 0;
+
     this.config.transitionDuration = configuration.transitionDuration || 500;
   };
 
@@ -201,7 +204,8 @@ function Gauge(placeholderName, configuration) {
   this.valueToDegrees = function(value) {
     // thanks @closealert
     //return value / this.config.range * 270 - 45;
-    return value / this.config.range * 270 - (this.config.min / this.config.range * 270 + 45);
+    var rotate = 45 + this.config.rotation;
+    return value / this.config.range * 270 - (this.config.min / this.config.range * 270 + rotate);
   };
 
   this.valueToRadians = function(value) {
