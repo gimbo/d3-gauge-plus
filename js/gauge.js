@@ -16,6 +16,7 @@ function Gauge(placeholderName, configuration) {
     this.config.min = undefined != configuration.min ? configuration.min : -6;
     this.config.max = undefined != configuration.max ? configuration.max : 6;
     this.config.range = this.config.max - this.config.min;
+    this.config.initial = undefined != configuration.initial ? configuration.initial : (this.config.min + this.config.max) / 2;;
 
     this.config.majorTicks = configuration.majorTicks || 13;
     this.config.majorTickColor = configuration.majorTickColor || "#333";
@@ -122,6 +123,7 @@ function Gauge(placeholderName, configuration) {
 
   this.renderPointer = function() {
     var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
+    // XXX Rotation bugs if we start anywhere other than 0 (or is it mid point?)
     this.pointerValue = (this.config.min + this.config.max) / 2;
     var pointerPath = this.buildPointerPath(this.pointerValue);
     var pointerLine = d3.svg.line()

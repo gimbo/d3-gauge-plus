@@ -1,14 +1,14 @@
 var gauge_scratch = function() {
 
   var tcasGauge;
-  var current = -6;
 
   function createGauge(name, min, max) {
     var config = {
       size: 500,
       min: undefined != min ? min : -6,
       max: undefined != max ? max : 6,
-      rotation: 0
+      rotation: 0,
+      transitionDuration: 200
     };
 
     var gauge;
@@ -33,20 +33,20 @@ var gauge_scratch = function() {
     gauge.redraw(value);
   }
 
-  function tick() {
-    current = current + 1;
-    if (current > 6) {
-      current = -6;
+  function tick(gauge) {
+    var newValue = gauge.pointerValue + 1;
+    if (newValue > gauge.config.max) {
+      newValue = gauge.config.min;
     }
-    tcasGauge.setPointer(current);
+    tcasGauge.setPointer(newValue);
   }
 
   return {
     initialize : function() {
       tcasGauge = createGauge("tcas", -6, 6);
       tcasGauge.render();
-      tcasGauge.setPointer(-5, 0);
-      setInterval(tick, 1000);
+      // tcasGauge.setPointer(-5, 0);
+      setInterval(function() { tick(tcasGauge); }, 200);
     }
   };
 
