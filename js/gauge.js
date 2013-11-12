@@ -164,14 +164,6 @@ function Gauge(placeholderName, configuration) {
     var tail2 = this.valueToPoint(tailValue + delta, 0.12);
 
     return [head, head1, tail2, tail, tail1, head2, head];
-
-    function valueToPoint(value, factor)
-    {
-      var point = self.valueToPoint(value, factor);
-      point.x -= self.config.cx;
-      point.y -= self.config.cy;
-      return point;
-    }
   };
 
   this.drawBand = function(start, end, color) {
@@ -220,8 +212,6 @@ function Gauge(placeholderName, configuration) {
   };
 
   this.valueToDegrees = function(value) {
-    // thanks @closealert
-    //return value / this.config.range * 270 - 45;
     var rotate = 45 + this.config.rotation;
     return value / this.config.range * 270 - (this.config.min / this.config.range * 270 + rotate);
   };
