@@ -5,42 +5,50 @@ function Gauge(placeholderName, configuration) {
   var self = this; // for internal d3 functions
 
   this.configure = function(configuration) {
+
     this.config = configuration;
 
-    this.config.size = this.config.size * 0.9;
+    function setConfig(name, defaultValue) {
+      if (self.config[name] === undefined) {
+        self.config[name] = defaultValue;
+      }
+    }
 
+    var defaults = {
+      min: -6,
+      max: 6,
+      innerStrokeColor: "#e0e0e0",
+      innerFillColor: "#fff",
+      drawOuterCircle: true,
+      outerStrokeColor: "#000",
+      outerFillColor: "#ccc",
+      majorTickColor: "#333",
+      majorTickWidth: "2px",
+      minorTicks: 5,
+      minorTickColor: "#666",
+      minorTickWidth: "1px",
+      greenColor: "#109618",
+      yellowColor: "#FF9900",
+      redColor: "#DC3912",
+      transitionDuration: 500,
+      clampUnderflow: false,
+      clampOverflow: false,
+      rotation: 90 // Offset gap degrees (anticlockwise).  0: gap at bottom; 90: gap at right.
+    };
+
+    for (var key in defaults) {
+      setConfig(key, defaults[key]);
+    }
+
+    this.config.size = this.config.size * 0.9;
     this.config.raduis = this.config.size * 0.97 / 2;
     this.config.cx = this.config.size / 2;
     this.config.cy = this.config.size / 2;
-
-    this.config.min = undefined != configuration.min ? configuration.min : -6;
-    this.config.max = undefined != configuration.max ? configuration.max : 6;
     this.config.range = this.config.max - this.config.min;
-    this.config.initial = undefined != configuration.initial ? configuration.initial : (this.config.min + this.config.max) / 2;;
+    setConfig("initial", (this.config.min + this.config.max) / 2);
+    setConfig("majorTicks", this.config.range + 1);
 
-    this.config.majorTicks = configuration.majorTicks || this.config.range + 1;
-    this.config.majorTickColor = configuration.majorTickColor || "#333";
-    this.config.majorTickWidth = configuration.majorTickWidth || "2px";
-
-    this.config.minorTicks = configuration.minorTicks || 5;
-    this.config.minorTickColor = configuration.majorTickColor || "#666";
-    this.config.minorTickWidth = configuration.minorTickWidth || "1px";
-
-    this.config.greenColor   = configuration.greenColor || "#109618";
-    this.config.yellowColor = configuration.yellowColor || "#FF9900";
-    this.config.redColor   = configuration.redColor || "#DC3912";
-
-    this.config.innerStrokeColor = configuration.innerStrokeColor || "#e0e0e0";
-    this.config.innerFillColor = configuration.innerFillColor || "#fff";
-
-    this.config.drawOuterCircle = configuration.drawOuterCircle || false;
-    this.config.outerStrokeColor = configuration.outerStrokeColor || "#000";
-    this.config.outerFillColor = configuration.outerFillColor || "#ccc";
-
-    // Offset gap degrees (anticlockwise).  0: gap at bottom; 90: gap at right.
-    this.config.rotation = configuration.rotation || 0;
-
-    this.config.transitionDuration = configuration.transitionDuration || 500;
+    console.log(this.config);
   };
 
   this.render = function() {
@@ -167,8 +175,9 @@ function Gauge(placeholderName, configuration) {
   };
 
   this.drawBand = function(start, end, color) {
-    if (0 >= end - start) return;
-
+    if (0 >= end - start) {
+      return;
+    }
     this.body.append("svg:path")
           .style("fill", color)
           .attr("d", d3.svg.arc()
@@ -182,8 +191,12 @@ function Gauge(placeholderName, configuration) {
   };
 
   this.setPointer = function(newValue, duration) {
-    // Clamp new value within range.
     var valueForAngle;
+    if ((newValue > self.config.max) && this.config.clampOverflow) {
+      newValue = self.config.max;
+    } else if ((newValue < self.config.min) && this.config.clampUnderflow) {
+      newValue = self.config.min;
+    }
     if (newValue > self.config.max) {
       valueForAngle = self.config.max + 0.02 * self.config.range;
     } else if (newValue < self.config.min) {
@@ -194,9 +207,8 @@ function Gauge(placeholderName, configuration) {
     if (undefined === duration) {
       duration = this.config.transitionDuration;
     }
-    var oldAngle = this.pointerAngle; // (self.valueToDegrees(this.pointerValue) - 90);
+    var oldAngle = this.pointerAngle;
     var newAngle = self.valueToDegrees(valueForAngle) - 90;
-    console.log("oldValue", this.pointerValue, "newValue", newValue, "valueForAngle", valueForAngle, "oldAngle", oldAngle, "newAngle", newAngle);
     this.pointerValue = newValue;
     this.pointerAngle = newAngle;
     this.rotateElement(this.body.select(".pointerContainer").selectAll("path"),

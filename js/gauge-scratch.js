@@ -5,10 +5,13 @@ var gauge_scratch = function() {
   function createGauge(name, minValue, maxValue) {
     var config = {
       size: 500,
+      drawOuterCircle: false,
+      innerStrokeColor: "#fff",
       min: minValue,
       max: maxValue,
       rotation: 0,
       transitionDuration: 500,
+      initial: 1
     };
 
     var gauge;
@@ -46,10 +49,10 @@ var gauge_scratch = function() {
       tcasGauge = createGauge("tcas", -2, 2);
       tcasGauge.render();
       // tcasGauge.setPointer(-5, 0);
-      for (var i=0; i<20; i++) {
-        setTimeout(function() { tick(tcasGauge); }, 1000 * i);
-      }
-      // setInterval(function() { tick(tcasGauge); }, 1500);
+      // for (var i=0; i<20; i++) {
+      //   setTimeout(function() { tick(tcasGauge); }, 1000 * i);
+      // }
+      setInterval(function() { tick(tcasGauge); }, 1500);
     }
   };
 
