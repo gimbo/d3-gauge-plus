@@ -10,8 +10,8 @@ var gauge_scratch = function() {
       min: minValue,
       max: maxValue,
       rotation: 0,
-      transitionDuration: 500,
-      initial: 1
+      gap: 90,
+      transitionDuration: 500
     };
 
     var gauge;
@@ -46,12 +46,14 @@ var gauge_scratch = function() {
 
   return {
     initialize : function() {
-      tcasGauge = createGauge("tcas", -2, 2);
+      tcasGauge = createGauge("tcas", -6, 4);
       tcasGauge.render();
       // tcasGauge.setPointer(-5, 0);
       // for (var i=0; i<20; i++) {
       //   setTimeout(function() { tick(tcasGauge); }, 1000 * i);
       // }
+
+      // setTimeout(function() { tick(tcasGauge); }, 1500);
       setInterval(function() { tick(tcasGauge); }, 1500);
     }
   };

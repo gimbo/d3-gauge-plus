@@ -14,6 +14,19 @@ function Gauge(placeholderName, configuration) {
       }
     }
 
+    function clamp(name, minimum, maximum) {
+      if (undefined !== minimum) {
+        console.log("Before", name, minimum, self.config[name]);
+        self.config[name] = Math.max(self.config[name], minimum);
+        console.log("After", name, minimum, self.config[name]);
+      }
+      if (undefined !== maximum) {
+        console.log("Before", name, maximum, self.config[name]);
+        self.config[name] = Math.min(self.config[name], maximum);
+        console.log("After", name, maximum, self.config[name]);
+      }
+    }
+
     var defaults = {
       min: -6,
       max: 6,
@@ -33,6 +46,7 @@ function Gauge(placeholderName, configuration) {
       transitionDuration: 500,
       clampUnderflow: false,
       clampOverflow: false,
+      gap: 90,
       rotation: 90 // Offset gap degrees (anticlockwise).  0: gap at bottom; 90: gap at right.
     };
 
@@ -41,12 +55,17 @@ function Gauge(placeholderName, configuration) {
     }
 
     this.config.size = this.config.size * 0.9;
-    this.config.raduis = this.config.size * 0.97 / 2;
+    this.config.raduis = this.config.size * 0.97 / 2; // XXX raduis
     this.config.cx = this.config.size / 2;
     this.config.cy = this.config.size / 2;
     this.config.range = this.config.max - this.config.min;
     setConfig("initial", (this.config.min + this.config.max) / 2);
     setConfig("majorTicks", this.config.range + 1);
+
+    clamp("majorTicks", 0);
+    clamp("minorTicks", 0);
+    clamp("transitionDuration", 0);
+    clamp("gap", 0, 360);
 
     console.log(this.config);
   };
@@ -105,6 +124,9 @@ function Gauge(placeholderName, configuration) {
     var major;
     var minor;
     // Render major ticks.
+    if (this.config.majorTicks <= 0) {
+      return;
+    }
     majorDelta = this.config.range / (this.config.majorTicks - 1);
     for (major = this.config.min; major <= this.config.max; major += majorDelta) {
       // Render minor ticks.
@@ -131,10 +153,11 @@ function Gauge(placeholderName, configuration) {
   };
 
   this.renderPointer = function() {
-    var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
-    // XXX Rotation bugs if we start anywhere other than 0 (or is it mid point?)
+    // Start with pointer pointing to middle value.
     this.pointerValue = (this.config.min + this.config.max) / 2;
-    this.pointerAngle = 0; // XXX Bluergh
+    // XXX this.pointerAngle = 270 + this.config.rotate + (this.config.gap / 2); // XXX Bluergh
+
+    var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
     var pointerPath = this.buildPointerPath(this.pointerValue);
     var pointerLine = d3.svg.line()
                   .x(function(d) { return d.x })
@@ -211,13 +234,31 @@ function Gauge(placeholderName, configuration) {
                        duration);
   };
 
+  // 0 seems to be "pointing to the left".
   this.valueToDegrees = function(value) {
-    var rotate = 45 + this.config.rotation;
-    return value / this.config.range * 270 - (this.config.min / this.config.range * 270 + rotate);
+    // Value as a proportion of the range.  Somewhere between 0 and 1
+    // (or slightly out of that ranfge for underflow/overflow).
+    var valueProp = (value - this.config.min) / this.config.range; // 0 to 1
+    // 0 rotation (in config) means gap at bottom.  But in drawing
+    // terms, 0 degrees is to the left, so we rotate everything by 270
+    // degrees to get 0 degrees to point to the bottom, then rotate by
+    // half of whatever gap has been requested in order to centre the
+    // gap there.  Finally add whatever rotation the config asks for.
+    var rotate = 270 + (this.config.gap / 2) + this.config.rotation;
+    // arc is the number of degrees covered by the gauge - it defaults
+    // to 270 (ie a gap of 90 degrees).
+    var arc = 360 - this.config.gap;
+    var angleFromStart = valueProp * arc + rotate;
+    return angleFromStart;
+
   };
 
   this.valueToRadians = function(value) {
     return this.valueToDegrees(value) * Math.PI / 180;
+  };
+
+  // Need to convert from polar to rectangular co-ordinates here, right?
+  this.degreesToPoint = function(degrees, distance) {
   };
 
   this.valueToPoint = function(value, factor) {
