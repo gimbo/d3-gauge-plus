@@ -1,6 +1,6 @@
-var gauge_scratch = function() {
+var d3_gauge_plus_demo = function() {
 
-  var tcasGauge;
+  var demoGauge;
 
   function createGauge(name, minValue, maxValue) {
     var config = {
@@ -42,21 +42,21 @@ var gauge_scratch = function() {
     if (newValue > gauge.config.max + 1) {
       newValue = gauge.config.min - 1;
     }
-    tcasGauge.setPointer(newValue, 1000);
+    demoGauge.setPointer(newValue, 1000);
   }
 
   return {
     initialize : function() {
-      tcasGauge = createGauge("tcas", -6, 6);
-      tcasGauge.render();
-      // tcasGauge.setPointer(-5, 0);
+      demoGauge = createGauge("demo", -6, 6);
+      demoGauge.render();
+      // demoGauge.setPointer(-5, 0);
       // for (var i=0; i<20; i++) {
-      //   setTimeout(function() { tick(tcasGauge); }, 1000 * i);
+      //   setTimeout(function() { tick(demoGauge); }, 1000 * i);
       // }
 
-      // setInterval(function() { updateGaugeRandom(tcasGauge); }, 300);
-      // setTimeout(function() { tick(tcasGauge); }, 1500);
-      setInterval(function() { tick(tcasGauge); }, 750);
+      // setInterval(function() { updateGaugeRandom(demoGauge); }, 300);
+      // setTimeout(function() { tick(demoGauge); }, 1500);
+      setInterval(function() { tick(demoGauge); }, 750);
     }
   };
 
