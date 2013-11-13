@@ -119,7 +119,7 @@ function Gauge(gaugeName, configuration) {
   };
 
   this.renderLabel = function() {
-    if (undefined != this.config.label) {
+    if (undefined !== this.config.label) {
       var fontSize = Math.round(this.config.labelSize * this.config.size / 9);
       this.body.append("svg:text")
         .attr("x", this.config.cx)
@@ -199,8 +199,8 @@ function Gauge(gaugeName, configuration) {
     var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
     var pointerPath = this.buildPointerPath();
     var pointerLine = d3.svg.line()
-                  .x(function(d) { return d.x })
-                  .y(function(d) { return d.y })
+                  .x(function(d) { return d.x; })
+                  .y(function(d) { return d.y; })
                   .interpolate("basis");
     var pointer = pointerContainer.selectAll("path");
     pointer.data([pointerPath])
