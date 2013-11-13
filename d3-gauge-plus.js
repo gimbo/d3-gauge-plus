@@ -51,7 +51,7 @@ function Gauge(placeholderName, configuration) {
     }
 
     this.config.size = this.config.size * 0.9;
-    this.config.raduis = this.config.size * 0.97 / 2; // XXX raduis
+    this.config.radius = this.config.size * 0.97 / 2;
     this.config.cx = this.config.size / 2;
     this.config.cy = this.config.size / 2;
     this.config.range = this.config.max - this.config.min;
@@ -86,7 +86,7 @@ function Gauge(placeholderName, configuration) {
       this.body.append("svg:circle")
             .attr("cx", this.config.cx)
             .attr("cy", this.config.cy)
-            .attr("r", this.config.raduis)
+            .attr("r", this.config.radius)
             .style("fill", this.config.outerFillColor)
             .style("stroke", this.config.outerStrokeColor)
             .style("stroke-width", "0.5px");
@@ -96,7 +96,7 @@ function Gauge(placeholderName, configuration) {
     this.body.append("svg:circle")
           .attr("cx", this.config.cx)
           .attr("cy", this.config.cy)
-          .attr("r", 0.9 * this.config.raduis)
+          .attr("r", 0.9 * this.config.radius)
           .style("fill", this.config.innerFillColor)
           .style("stroke", this.config.innerStrokeColor)
           .style("stroke-width", "0.5px");
@@ -123,8 +123,8 @@ function Gauge(placeholderName, configuration) {
           .attr("d", d3.svg.arc()
             .startAngle(this.valueToRadians(start))
             .endAngle(this.valueToRadians(end))
-            .innerRadius(0.65 * this.config.raduis)
-            .outerRadius(0.85 * this.config.raduis))
+            .innerRadius(0.65 * this.config.radius)
+            .outerRadius(0.85 * this.config.radius))
           .attr("transform", function() {
             return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)";
           });
@@ -257,15 +257,15 @@ function Gauge(placeholderName, configuration) {
   // Need to convert from polar to rectangular co-ordinates here, right?
   this.degreesToPoint = function(degrees, distance) {
     return {
-      x: this.config.cx - this.config.raduis * distance * Math.cos(this.degreesToRadians(degrees)),
-      y: this.config.cy - this.config.raduis * distance * Math.sin(this.degreesToRadians(degrees))
+      x: this.config.cx - this.config.radius * distance * Math.cos(this.degreesToRadians(degrees)),
+      y: this.config.cy - this.config.radius * distance * Math.sin(this.degreesToRadians(degrees))
     };
   };
 
   this.valueToPoint = function(value, factor) {
     return {
-      x: this.config.cx - this.config.raduis * factor * Math.cos(this.valueToRadians(value)),
-      y: this.config.cy - this.config.raduis * factor * Math.sin(this.valueToRadians(value))
+      x: this.config.cx - this.config.radius * factor * Math.cos(this.valueToRadians(value)),
+      y: this.config.cy - this.config.radius * factor * Math.sin(this.valueToRadians(value))
     };
   };
 
