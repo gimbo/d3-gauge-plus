@@ -9,9 +9,10 @@ var gauge_scratch = function() {
       innerStrokeColor: "#fff",
       min: minValue,
       max: maxValue,
-      rotation: 0,
-      gap: 90,
-      transitionDuration: 500
+      initial: minValue,
+      rotation: 270,
+      gap: 45,
+      transitionDuration: 300
     };
 
     var gauge;
@@ -33,7 +34,7 @@ var gauge_scratch = function() {
       return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
     }
     var value = getRandomValue(gauge);
-    gauge.redraw(value);
+    gauge.setPointer(value);
   }
 
   function tick(gauge) {
@@ -46,15 +47,16 @@ var gauge_scratch = function() {
 
   return {
     initialize : function() {
-      tcasGauge = createGauge("tcas", -6, 4);
+      tcasGauge = createGauge("tcas", -6, 6);
       tcasGauge.render();
       // tcasGauge.setPointer(-5, 0);
       // for (var i=0; i<20; i++) {
       //   setTimeout(function() { tick(tcasGauge); }, 1000 * i);
       // }
 
+      // setInterval(function() { updateGaugeRandom(tcasGauge); }, 300);
       // setTimeout(function() { tick(tcasGauge); }, 1500);
-      setInterval(function() { tick(tcasGauge); }, 1500);
+      setInterval(function() { tick(tcasGauge); }, 750);
     }
   };
 

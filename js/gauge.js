@@ -16,14 +16,10 @@ function Gauge(placeholderName, configuration) {
 
     function clamp(name, minimum, maximum) {
       if (undefined !== minimum) {
-        console.log("Before", name, minimum, self.config[name]);
         self.config[name] = Math.max(self.config[name], minimum);
-        console.log("After", name, minimum, self.config[name]);
       }
       if (undefined !== maximum) {
-        console.log("Before", name, maximum, self.config[name]);
         self.config[name] = Math.min(self.config[name], maximum);
-        console.log("After", name, maximum, self.config[name]);
       }
     }
 
@@ -118,6 +114,22 @@ function Gauge(placeholderName, configuration) {
     renderOneRegion(this.config.redZones, this.config.redColor);
   };
 
+  this.drawBand = function(start, end, color) {
+    if (0 >= end - start) {
+      return;
+    }
+    this.body.append("svg:path")
+          .style("fill", color)
+          .attr("d", d3.svg.arc()
+            .startAngle(this.valueToRadians(start))
+            .endAngle(this.valueToRadians(end))
+            .innerRadius(0.65 * this.config.raduis)
+            .outerRadius(0.85 * this.config.raduis))
+          .attr("transform", function() {
+            return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)";
+          });
+  };
+
   this.renderTicks = function() {
     var majorDelta;
     var minorDelta;
@@ -153,12 +165,8 @@ function Gauge(placeholderName, configuration) {
   };
 
   this.renderPointer = function() {
-    // Start with pointer pointing to middle value.
-    this.pointerValue = (this.config.min + this.config.max) / 2;
-    // XXX this.pointerAngle = 270 + this.config.rotate + (this.config.gap / 2); // XXX Bluergh
-
     var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
-    var pointerPath = this.buildPointerPath(this.pointerValue);
+    var pointerPath = this.buildPointerPath();
     var pointerLine = d3.svg.line()
                   .x(function(d) { return d.x })
                   .y(function(d) { return d.y })
@@ -173,36 +181,21 @@ function Gauge(placeholderName, configuration) {
       .style("fill-opacity", 0.7);
   };
 
-  this.buildPointerPath = function(value) {
+  // Compute points for initial pointer state.
+  this.buildPointerPath = function() {
     var thinness = 13;
     var delta = this.config.range / thinness;
-
-    var head = this.valueToPoint(value, 0.85);
-    var head1 = this.valueToPoint(value - delta, 0.12);
-    var head2 = this.valueToPoint(value + delta, 0.12);
-
-    var tailValue = value - (this.config.range * (1/(270/360)) / 2);
-    var tail = this.valueToPoint(tailValue, 0.28);
-    var tail1 = this.valueToPoint(tailValue - delta, 0.12);
-    var tail2 = this.valueToPoint(tailValue + delta, 0.12);
-
+    // We start out pointing to the minimum value.
+    this.pointerValue = this.config.min;
+    this.pointerAngle = this.valueToDegrees(this.pointerValue);
+    var head = this.degreesToPoint(this.pointerAngle, 0.65);
+    var head1 = this.degreesToPoint(this.pointerAngle - 15, 0.12);
+    var head2 = this.degreesToPoint(this.pointerAngle + 15, 0.12);
+    var tailAngle = this.pointerAngle + 180;
+    var tail = this.degreesToPoint(tailAngle, 0.28);
+    var tail1 = this.degreesToPoint(tailAngle - 15, 0.12);
+    var tail2 = this.degreesToPoint(tailAngle + 15, 0.12);
     return [head, head1, tail2, tail, tail1, head2, head];
-  };
-
-  this.drawBand = function(start, end, color) {
-    if (0 >= end - start) {
-      return;
-    }
-    this.body.append("svg:path")
-          .style("fill", color)
-          .attr("d", d3.svg.arc()
-            .startAngle(this.valueToRadians(start))
-            .endAngle(this.valueToRadians(end))
-            .innerRadius(0.65 * this.config.raduis)
-            .outerRadius(0.85 * this.config.raduis))
-          .attr("transform", function() {
-            return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)";
-          });
   };
 
   this.setPointer = function(newValue, duration) {
@@ -223,9 +216,9 @@ function Gauge(placeholderName, configuration) {
       duration = this.config.transitionDuration;
     }
     var oldAngle = this.pointerAngle;
-    var newAngle = self.valueToDegrees(valueForAngle) - 90;
-    this.pointerValue = newValue;
+    var newAngle = self.valueToDegrees(valueForAngle) + 90 - this.config.rotation - (this.config.gap / 2);
     this.pointerAngle = newAngle;
+    this.pointerValue = newValue;
     this.rotateElement(this.body.select(".pointerContainer").selectAll("path"),
                        oldAngle,
                        newAngle,
@@ -234,7 +227,7 @@ function Gauge(placeholderName, configuration) {
                        duration);
   };
 
-  // 0 seems to be "pointing to the left".
+  // 0 degrees seems to be "pointing to the left".
   this.valueToDegrees = function(value) {
     // Value as a proportion of the range.  Somewhere between 0 and 1
     // (or slightly out of that ranfge for underflow/overflow).
@@ -253,12 +246,20 @@ function Gauge(placeholderName, configuration) {
 
   };
 
+  this.degreesToRadians = function(degrees) {
+    return degrees * Math.PI / 180;
+  };
+
   this.valueToRadians = function(value) {
-    return this.valueToDegrees(value) * Math.PI / 180;
+    return this.degreesToRadians(this.valueToDegrees(value));
   };
 
   // Need to convert from polar to rectangular co-ordinates here, right?
   this.degreesToPoint = function(degrees, distance) {
+    return {
+      x: this.config.cx - this.config.raduis * distance * Math.cos(this.degreesToRadians(degrees)),
+      y: this.config.cy - this.config.raduis * distance * Math.sin(this.degreesToRadians(degrees))
+    };
   };
 
   this.valueToPoint = function(value, factor) {
