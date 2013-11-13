@@ -3,15 +3,24 @@ var d3_gauge_plus_demo = function() {
   var demoGauge;
 
   function createGauge(name, minValue, maxValue) {
+
     var config = {
+
       size: 500,
+      rotation: 270,
+      gap: 45,
+
       drawOuterCircle: false,
       innerStrokeColor: "#fff",
+
+      label: "demo",
+      labelSize: 1.2,
+      labelColor: "#CCC",
+
       min: minValue,
       max: maxValue,
       initial: minValue,
-      rotation: 270,
-      gap: 45,
+
       transitionDuration: 300
     };
 

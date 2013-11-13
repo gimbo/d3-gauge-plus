@@ -1,6 +1,6 @@
-function Gauge(placeholderName, configuration) {
+function Gauge(gaugeName, configuration) {
 
-  this.placeholderName = placeholderName;
+  this.gaugeName = gaugeName;
 
   var self = this; // for internal d3 functions
 
@@ -24,26 +24,41 @@ function Gauge(placeholderName, configuration) {
     }
 
     var defaults = {
-      min: -6,
-      max: 6,
-      innerStrokeColor: "#e0e0e0",
-      innerFillColor: "#fff",
+
+      size: 100,
+      // Offset gap degrees (anticlockwise).  0: gap at bottom; 90:
+      // gap at right.
+      rotation: 90,
+      gap: 90,
+
       drawOuterCircle: true,
       outerStrokeColor: "#000",
       outerFillColor: "#ccc",
+      innerStrokeColor: "#e0e0e0",
+      innerFillColor: "#fff",
+
+      label: undefined,
+      labelSize: 1.0, // 1.0 is 1/9 of overall size
+      labelColor: "#333",
+
+      min: -6,
+      max: 6,
+      initial: undefined,
+      clampUnderflow: false,
+      clampOverflow: false,
+
       majorTickColor: "#333",
       majorTickWidth: "2px",
       minorTicks: 5,
       minorTickColor: "#666",
       minorTickWidth: "1px",
+
       greenColor: "#109618",
       yellowColor: "#FF9900",
       redColor: "#DC3912",
-      transitionDuration: 500,
-      clampUnderflow: false,
-      clampOverflow: false,
-      gap: 90,
-      rotation: 90 // Offset gap degrees (anticlockwise).  0: gap at bottom; 90: gap at right.
+
+      transitionDuration: 500
+
     };
 
     for (var key in defaults) {
@@ -67,13 +82,14 @@ function Gauge(placeholderName, configuration) {
   };
 
   this.render = function() {
-    this.body = d3.select("#" + this.placeholderName)
+    this.body = d3.select("#" + this.gaugeName)
               .append("svg:svg")
               .attr("class", "gauge")
               .attr("width", this.config.size)
               .attr("height", this.config.size);
 
     this.renderDisk();
+    this.renderLabel();
     this.renderRegions();
     this.renderTicks();
     this.renderPointer();
@@ -100,6 +116,21 @@ function Gauge(placeholderName, configuration) {
           .style("fill", this.config.innerFillColor)
           .style("stroke", this.config.innerStrokeColor)
           .style("stroke-width", "0.5px");
+  };
+
+  this.renderLabel = function() {
+    if (undefined != this.config.label) {
+      var fontSize = Math.round(this.config.labelSize * this.config.size / 9);
+      this.body.append("svg:text")
+        .attr("x", this.config.cx)
+        .attr("y", this.config.cy / 2 + fontSize / 2)
+        .attr("dy", fontSize / 2)
+        .attr("text-anchor", "middle")
+        .text(this.config.label)
+        .style("font-size", fontSize + "px")
+        .style("fill", this.config.labelColor)
+        .style("stroke-width", "0px");
+    }
   };
 
   this.renderRegions = function() {
