@@ -157,7 +157,7 @@ function Gauge(gaugeName, configuration) {
             .innerRadius(0.65 * this.config.radius)
             .outerRadius(0.85 * this.config.radius))
           .attr("transform", function() {
-            return "translate(" + self.config.cx + ", " + self.config.cy + ") rotate(270)";
+            return "translate(" + self.config.cx + ", " + self.config.cy + ")";
           });
   };
 
@@ -219,13 +219,13 @@ function Gauge(gaugeName, configuration) {
     // We start out pointing to the minimum value.
     this.pointerValue = this.config.min;
     this.pointerAngle = this.valueToDegrees(this.pointerValue);
-    var head = this.degreesToPoint(this.pointerAngle, 0.65);
-    var head1 = this.degreesToPoint(this.pointerAngle - 15, 0.12);
-    var head2 = this.degreesToPoint(this.pointerAngle + 15, 0.12);
+    var head = this.polarToCartesian(this.pointerAngle, 0.65);
+    var head1 = this.polarToCartesian(this.pointerAngle - 15, 0.12);
+    var head2 = this.polarToCartesian(this.pointerAngle + 15, 0.12);
     var tailAngle = this.pointerAngle + 180;
-    var tail = this.degreesToPoint(tailAngle, 0.28);
-    var tail1 = this.degreesToPoint(tailAngle - 15, 0.12);
-    var tail2 = this.degreesToPoint(tailAngle + 15, 0.12);
+    var tail = this.polarToCartesian(tailAngle, 0.28);
+    var tail1 = this.polarToCartesian(tailAngle - 15, 0.12);
+    var tail2 = this.polarToCartesian(tailAngle + 15, 0.12);
     return [head, head1, tail2, tail, tail1, head2, head];
   };
 
@@ -247,7 +247,7 @@ function Gauge(gaugeName, configuration) {
       duration = this.config.transitionDuration;
     }
     var oldAngle = this.pointerAngle;
-    var newAngle = self.valueToDegrees(valueForAngle) + 90 - this.config.rotation - (this.config.gap / 2);
+    var newAngle = self.valueToDegrees(valueForAngle) + this.config.rotation - (this.config.gap / 2);
     this.pointerAngle = newAngle;
     this.pointerValue = newValue;
     this.rotateElement(this.body.select(".pointerContainer").selectAll("path"),
@@ -258,17 +258,24 @@ function Gauge(gaugeName, configuration) {
                        duration);
   };
 
-  // 0 degrees seems to be "pointing to the left".
+
+
+  // Converting gauge values to angles and points on the disk.
+
+  // Convert a value (on the guage) into the corresponding angle on
+  // the gauge.
   this.valueToDegrees = function(value) {
     // Value as a proportion of the range.  Somewhere between 0 and 1
     // (or slightly out of that ranfge for underflow/overflow).
     var valueProp = (value - this.config.min) / this.config.range; // 0 to 1
     // 0 rotation (in config) means gap at bottom.  But in drawing
-    // terms, 0 degrees is to the left, so we rotate everything by 270
-    // degrees to get 0 degrees to point to the bottom, then rotate by
-    // half of whatever gap has been requested in order to centre the
-    // gap there.  Finally add whatever rotation the config asks for.
-    var rotate = 270 + (this.config.gap / 2) + this.config.rotation;
+    // terms, 0 degrees is upwards (assuming the computation goes via
+    // polarToCartesian below, which it should), so we rotate
+    // everything by 180 degrees to get 0 degrees to point to the
+    // bottom, then rotate by half of whatever gap has been requested
+    // in order to centre the gap there.  Finally add whatever
+    // rotation the config asks for.
+    var rotate = 180 + (this.config.gap / 2) + this.config.rotation;
     // arc is the number of degrees covered by the gauge - it defaults
     // to 270 (ie a gap of 90 degrees).
     var arc = 360 - this.config.gap;
@@ -277,28 +284,41 @@ function Gauge(gaugeName, configuration) {
 
   };
 
-  this.degreesToRadians = function(degrees) {
-    return degrees * Math.PI / 180;
-  };
-
   this.valueToRadians = function(value) {
     return this.degreesToRadians(this.valueToDegrees(value));
   };
 
-  // Need to convert from polar to rectangular co-ordinates here, right?
-  this.degreesToPoint = function(degrees, distance) {
+  // Convert a gauge value and a factor (0-1, a proportion of the
+  // radius) to cartesian co-ordinates.
+  this.valueToPoint = function(value, factor) {
+    return this.polarToCartesian(this.valueToDegrees(value), factor);
+  };
+
+
+
+  // Co-ordinate system utilities.
+
+  this.degreesToRadians = function(degrees) {
+    return degrees * Math.PI / 180;
+  };
+
+  // Convert polar coordinate - specified by angle t (in degrees,
+  // where 0 degrees is upwards) and distance r (as proportion of
+  // radius, so 0 is centre and 1 is at circumference) - into
+  // Cartesian coordinate.
+  this.polarToCartesian = function(t, r) {
+    // We add 90 degrees to t here so that t=0 degrees means "upwards"
+    // (otherwise it means "to the left", which is just weird).
+    var radians = this.degreesToRadians(t + 90);
     return {
-      x: this.config.cx - this.config.radius * distance * Math.cos(this.degreesToRadians(degrees)),
-      y: this.config.cy - this.config.radius * distance * Math.sin(this.degreesToRadians(degrees))
+      x: this.config.cx - this.config.radius * r * Math.cos(radians),
+      y: this.config.cy - this.config.radius * r * Math.sin(radians)
     };
   };
 
-  this.valueToPoint = function(value, factor) {
-    return {
-      x: this.config.cx - this.config.radius * factor * Math.cos(this.valueToRadians(value)),
-      y: this.config.cy - this.config.radius * factor * Math.sin(this.valueToRadians(value))
-    };
-  };
+
+
+  // Drawing utilities.
 
   this.drawLine = function(point1, point2, color, width) {
     this.body.append("svg:line")
