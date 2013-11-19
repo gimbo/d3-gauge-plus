@@ -90,7 +90,10 @@ function Gauge(gaugeName, configuration) {
 
     this.renderDisk();
     this.renderLabel();
-    this.renderRegions();
+    this.renderRegions([
+      [this.config.greenZones, this.config.greenColor],
+      [this.config.yellowZones, this.config.yellowColor],
+      [this.config.redZones, this.config.redColor]]);
     this.renderTicks();
     this.renderPointer();
     this.setPointer(this.config.initial, 0);
@@ -133,16 +136,23 @@ function Gauge(gaugeName, configuration) {
     }
   };
 
-  this.renderRegions = function() {
+  this.renderRegions = function(zones) {
     function renderOneRegion(region, color) {
       var i;
       for (i in region) {
         self.drawBand(region[i].from, region[i].to, color);
       }
     }
-    renderOneRegion(this.config.greenZones, this.config.greenColor);
+    this.clearRegions();
+    for (var z in zones) {
+      renderOneRegion(zones[z][0], zones[z][1]);
+    }
     renderOneRegion(this.config.yellowZones, this.config.yellowColor);
     renderOneRegion(this.config.redZones, this.config.redColor);
+  };
+
+  this.clearRegions = function() {
+    this.body.selectAll(".gaugeBand").remove();
   };
 
   this.drawBand = function(start, end, color) {
@@ -151,6 +161,7 @@ function Gauge(gaugeName, configuration) {
     }
     this.body.append("svg:path")
           .style("fill", color)
+          .attr("class", "gaugeBand")
           .attr("d", d3.svg.arc()
             .startAngle(this.valueToRadians(start))
             .endAngle(this.valueToRadians(end))

@@ -21,7 +21,7 @@ var d3_gauge_plus_demo = function() {
       max: maxValue,
       initial: minValue,
 
-      transitionDuration: 300
+      transitionDuration: 50
     };
 
     var gauge;
@@ -51,7 +51,7 @@ var d3_gauge_plus_demo = function() {
     if (newValue > gauge.config.max + 1) {
       newValue = gauge.config.min - 1;
     }
-    demoGauge.setPointer(newValue, 1000);
+    demoGauge.setPointer(newValue);
   }
 
   return {
@@ -65,7 +65,7 @@ var d3_gauge_plus_demo = function() {
 
       // setInterval(function() { updateGaugeRandom(demoGauge); }, 300);
       // setTimeout(function() { tick(demoGauge); }, 1500);
-      setInterval(function() { tick(demoGauge); }, 750);
+      setInterval(function() { tick(demoGauge); }, 1750);
     }
   };
 
