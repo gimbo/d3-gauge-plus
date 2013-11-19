@@ -197,6 +197,7 @@ function Gauge(gaugeName, configuration) {
 
   this.renderPointer = function() {
     var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
+    this.pointerValue = this.config.min; // Start out pointing at minimum value.
     var pointerPath = this.buildPointerPath();
     var pointerLine = d3.svg.line()
                   .x(function(d) { return d.x; })
@@ -210,14 +211,24 @@ function Gauge(gaugeName, configuration) {
       .style("fill", "#dc3912")
       .style("stroke", "#c63310")
       .style("fill-opacity", 0.7);
+    var fontSize = Math.round(this.config.labelSize * this.config.size / 9);
+    pointerContainer.selectAll("text")
+      .data([this.pointerValue])
+      .enter()
+      .append("svg:text")
+      .attr("x", this.config.cx)
+      .attr("y", this.config.size - this.config.cy / 2 - fontSize)
+      .attr("dy", fontSize / 2)
+      .attr("text-anchor", "middle")
+      .style("font-size", fontSize + "px")
+      .style("fill", this.config.labelColor)
+      .style("stroke-width", "0px");
   };
 
   // Compute points for initial pointer state.
   this.buildPointerPath = function() {
     var thinness = 13;
     var delta = this.config.range / thinness;
-    // We start out pointing to the minimum value.
-    this.pointerValue = this.config.min;
     this.pointerAngle = this.valueToDegrees(this.pointerValue);
     var head = this.polarToCartesian(this.pointerAngle, 0.65);
     var head1 = this.polarToCartesian(this.pointerAngle - 15, 0.12);
@@ -250,12 +261,14 @@ function Gauge(gaugeName, configuration) {
     var newAngle = self.valueToDegrees(valueForAngle) + this.config.rotation - (this.config.gap / 2);
     this.pointerAngle = newAngle;
     this.pointerValue = newValue;
-    this.rotateElement(this.body.select(".pointerContainer").selectAll("path"),
+    var pointerContainer = this.body.select(".pointerContainer");
+    this.rotateElement(pointerContainer.selectAll("path"),
                        oldAngle,
                        newAngle,
                        self.config.cx,
                        self.config.cy,
                        duration);
+    pointerContainer.selectAll("text").text(parseFloat(newValue.toFixed(2)));
   };
 
 
