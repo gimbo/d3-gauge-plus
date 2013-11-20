@@ -16,7 +16,7 @@ var d3_gauge_plus = (function() {
     this.configure = function(configuration) {
 
       var defaults,
-          key;
+        key;
       this.config = configuration;
 
       function setConfig(name, defaultValue) {
@@ -96,10 +96,10 @@ var d3_gauge_plus = (function() {
 
     this.render = function() {
       this.body = d3.select("#" + this.gaugeName)
-                .append("svg:svg")
-                .attr("class", "gauge")
-                .attr("width", this.config.size)
-                .attr("height", this.config.size);
+        .append("svg:svg")
+          .attr("class", "gauge")
+          .attr("width", this.config.size)
+          .attr("height", this.config.size);
 
       this.renderDisk();
       this.renderLabel();
@@ -117,22 +117,22 @@ var d3_gauge_plus = (function() {
       // Outer circle
       if (this.config.drawOuterCircle) {
         this.body.append("svg:circle")
-              .attr("cx", this.config.cx)
-              .attr("cy", this.config.cy)
-              .attr("r", this.config.radius)
-              .style("fill", this.config.outerFillColor)
-              .style("stroke", this.config.outerStrokeColor)
-              .style("stroke-width", "0.5px");
+            .attr("cx", this.config.cx)
+            .attr("cy", this.config.cy)
+            .attr("r", this.config.radius)
+            .style("fill", this.config.outerFillColor)
+            .style("stroke", this.config.outerStrokeColor)
+            .style("stroke-width", "0.5px");
       }
 
       // Inner circle
       this.body.append("svg:circle")
-            .attr("cx", this.config.cx)
-            .attr("cy", this.config.cy)
-            .attr("r", 0.9 * this.config.radius)
-            .style("fill", this.config.innerFillColor)
-            .style("stroke", this.config.innerStrokeColor)
-            .style("stroke-width", "0.5px");
+          .attr("cx", this.config.cx)
+          .attr("cy", this.config.cy)
+          .attr("r", 0.9 * this.config.radius)
+          .style("fill", this.config.innerFillColor)
+          .style("stroke", this.config.innerStrokeColor)
+          .style("stroke-width", "0.5px");
     };
 
     this.renderLabel = function() {
@@ -140,14 +140,14 @@ var d3_gauge_plus = (function() {
       if (undefined !== this.config.label) {
         fontSize = Math.round(this.config.labelSize * this.config.size / 9);
         this.body.append("svg:text")
-          .attr("x", this.config.cx)
-          .attr("y", this.config.cy / 2 + fontSize / 2)
-          .attr("dy", fontSize / 2)
-          .attr("text-anchor", "middle")
+            .attr("x", this.config.cx)
+            .attr("y", this.config.cy / 2 + fontSize / 2)
+            .attr("dy", fontSize / 2)
+            .attr("text-anchor", "middle")
           .text(this.config.label)
-          .style("font-size", fontSize + "px")
-          .style("fill", this.config.labelColor)
-          .style("stroke-width", "0px");
+            .style("font-size", fontSize + "px")
+            .style("fill", this.config.labelColor)
+            .style("stroke-width", "0px");
       }
     };
 
@@ -180,23 +180,23 @@ var d3_gauge_plus = (function() {
         return;
       }
       this.body.append("svg:path")
-            .style("fill", color)
-            .attr("class", "gaugeBand")
-            .attr("d", d3.svg.arc()
+          .style("fill", color)
+          .attr("class", "gaugeBand")
+          .attr("d", d3.svg.arc()
               .startAngle(this.valueToRadians(start))
               .endAngle(this.valueToRadians(end))
               .innerRadius(0.65 * this.config.radius)
               .outerRadius(0.85 * this.config.radius))
-            .attr("transform", function() {
-              return "translate(" + self.config.cx + ", " + self.config.cy + ")";
-            });
+          .attr("transform", function() {
+            return "translate(" + self.config.cx + ", " + self.config.cy + ")";
+          });
     };
 
     this.renderTicks = function() {
       var majorDelta,
-          minorDelta,
-          major,
-          minor;
+        minorDelta,
+        major,
+        minor;
       // Render major ticks.
       if (this.config.majorTicks <= 0) {
         return;
@@ -228,49 +228,46 @@ var d3_gauge_plus = (function() {
 
     this.renderPointer = function() {
       var pointerContainer,
-          pointerPath,
-          pointerLine,
-          pointer,
-          fontSize;
+        pointerPath,
+        pointerLine,
+        fontSize;
       pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
       this.pointerValue = this.config.min; // Start out pointing at minimum value.
       pointerPath = this.buildPointerPath();
       pointerLine = d3.svg.line()
-                    .x(function(d) { return d.x; })
-                    .y(function(d) { return d.y; })
-                    .interpolate("basis");
-      pointer = pointerContainer.selectAll("path");
-      pointer.data([pointerPath])
-        .enter()
-        .append("svg:path")
-        .attr("d", pointerLine)
-        .style("fill", "#dc3912")
-        .style("stroke", "#c63310")
-        .style("fill-opacity", 0.7);
+          .x(function(d) { return d.x; })
+          .y(function(d) { return d.y; })
+          .interpolate("basis");
+      pointerContainer.selectAll("path")
+          .data([pointerPath])
+        .enter().append("svg:path")
+          .attr("d", pointerLine)
+          .style("fill", "#dc3912")
+          .style("stroke", "#c63310")
+          .style("fill-opacity", 0.7);
       fontSize = Math.round(this.config.labelSize * this.config.size / 9);
       pointerContainer.selectAll("text")
-        .data([this.pointerValue])
-        .enter()
-        .append("svg:text")
-        .attr("x", this.config.cx)
-        .attr("y", this.config.size - this.config.cy / 2 - fontSize)
-        .attr("dy", fontSize / 2)
-        .attr("text-anchor", "middle")
-        .style("font-size", fontSize + "px")
-        .style("fill", this.config.labelColor)
-        .style("stroke-width", "0px");
+          .data([this.pointerValue])
+        .enter().append("svg:text")
+          .attr("x", this.config.cx)
+          .attr("y", this.config.size - this.config.cy / 2 - fontSize)
+          .attr("dy", fontSize / 2)
+          .attr("text-anchor", "middle")
+          .style("font-size", fontSize + "px")
+          .style("fill", this.config.labelColor)
+          .style("stroke-width", "0px");
     };
 
     // Compute points for initial pointer state.
     this.buildPointerPath = function() {
       var fatness = 15,
-          head,
-          head1,
-          head2,
-          tailAngle,
-          tail,
-          tail1,
-          tail2;
+        head,
+        head1,
+        head2,
+        tailAngle,
+        tail,
+        tail1,
+        tail2;
       this.pointerAngle = this.valueToDegrees(this.pointerValue);
       tailAngle = this.pointerAngle + 180;
       head = this.polarToCartesian(this.pointerAngle, 0.65);
@@ -284,9 +281,9 @@ var d3_gauge_plus = (function() {
 
     this.setPointer = function(newValue, duration) {
       var valueForAngle,
-          oldAngle = this.pointerAngle,
-          newAngle,
-          pointerContainer = this.body.select(".pointerContainer");
+        oldAngle = this.pointerAngle,
+        newAngle,
+        pointerContainer = this.body.select(".pointerContainer");
       if ((newValue > self.config.max) && this.config.clampOverflow) {
         newValue = self.config.max;
       } else if ((newValue < self.config.min) && this.config.clampUnderflow) {
@@ -322,9 +319,9 @@ var d3_gauge_plus = (function() {
     // the gauge.
     this.valueToDegrees = function(value) {
       var valueProp,
-          rotate,
-          arc,
-          angleFromStart;
+        rotate,
+        arc,
+        angleFromStart;
       // Value as a proportion of the range.  Somewhere between 0 and 1
       // (or slightly out of that ranfge for underflow/overflow).
       valueProp = (value - this.config.min) / this.config.range;
@@ -381,36 +378,35 @@ var d3_gauge_plus = (function() {
 
     this.drawLine = function(point1, point2, color, width) {
       this.body.append("svg:line")
-        .attr("x1", point1.x)
-        .attr("y1", point1.y)
-        .attr("x2", point2.x)
-        .attr("y2", point2.y)
-        .style("stroke", color)
-        .style("stroke-width", width);
+          .attr("x1", point1.x)
+          .attr("y1", point1.y)
+          .attr("x2", point2.x)
+          .attr("y2", point2.y)
+          .style("stroke", color)
+          .style("stroke-width", width);
     };
 
     this.drawText = function(point, text, fontSize, color) {
       this.body.append("svg:text")
-        .attr("x", point.x)
-        .attr("y", point.y)
-        .attr("dy", fontSize / 3)
-        .attr("text-anchor", "middle")
+          .attr("x", point.x)
+          .attr("y", point.y)
+          .attr("dy", fontSize / 3)
+          .attr("text-anchor", "middle")
         .text(text)
-        .style("font-size", fontSize + "px")
-        .style("fill", color)
-        .style("stroke-width", "0px");
+          .style("font-size", fontSize + "px")
+          .style("fill", color)
+          .style("stroke-width", "0px");
     };
 
     this.rotateElement = function(element, fromAngle, toAngle, centre_x, centre_y, duration) {
-      element
-        .transition()
-        .duration(duration)
-        .attrTween("transform", function() {
-          return function(step) {
-            var dest = fromAngle + (toAngle - fromAngle) * step;
-            return "rotate("+ dest +","+ centre_x + ","+ centre_y +")";
-          };
-        });
+      element.transition()
+          .duration(duration)
+          .attrTween("transform", function() {
+            return function(step) {
+              var dest = fromAngle + (toAngle - fromAngle) * step;
+              return "rotate("+ dest +","+ centre_x + ","+ centre_y +")";
+            };
+          });
     };
 
     // initialization
