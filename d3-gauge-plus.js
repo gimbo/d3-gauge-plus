@@ -1,4 +1,11 @@
+/*jslint indent: 2 */
+/*jslint white: true */
+
+/*global d3 */
+
 function Gauge(gaugeName, configuration) {
+
+  "use strict";
 
   this.gaugeName = gaugeName;
 
@@ -64,7 +71,9 @@ function Gauge(gaugeName, configuration) {
     };
 
     for (key in defaults) {
-      setConfig(key, defaults[key]);
+      if (defaults.hasOwnProperty(key)) {
+        setConfig(key, defaults[key]);
+      }
     }
 
     this.config.size = this.config.size * 0.9;
@@ -95,7 +104,8 @@ function Gauge(gaugeName, configuration) {
     this.renderRegions([
       [this.config.greenZones, this.config.greenColor],
       [this.config.yellowZones, this.config.yellowColor],
-      [this.config.redZones, this.config.redColor]]);
+      [this.config.redZones, this.config.redColor]
+    ]);
     this.renderTicks();
     this.renderPointer();
     this.setPointer(this.config.initial, 0);
@@ -144,12 +154,16 @@ function Gauge(gaugeName, configuration) {
     function renderOneRegion(region, color) {
       var band;
       for (band in region) {
-        self.drawBand(region[band].from, region[band].to, color);
+        if (region.hasOwnProperty(band)) {
+          self.drawBand(region[band].from, region[band].to, color);
+        }
       }
     }
     this.clearRegions();
     for (zone in zones) {
-      renderOneRegion(zones[zone][0], zones[zone][1]);
+      if (zones.hasOwnProperty(zone)) {
+        renderOneRegion(zones[zone][0], zones[zone][1]);
+      }
     }
     renderOneRegion(this.config.yellowZones, this.config.yellowColor);
     renderOneRegion(this.config.redZones, this.config.redColor);
@@ -201,7 +215,7 @@ function Gauge(gaugeName, configuration) {
                     this.config.majorTickWidth);
 
       // Render number for min and max values.
-      if (true || major == this.config.min || major == this.config.max) {
+      if (major === this.config.min || major === this.config.max) {
         this.drawText(this.valueToPoint(major, 0.58),
                       parseFloat(major.toFixed(2)),
                       Math.round(this.config.size / 20),
@@ -247,8 +261,7 @@ function Gauge(gaugeName, configuration) {
 
   // Compute points for initial pointer state.
   this.buildPointerPath = function() {
-    var thinness = 13,
-        delta = this.config.range / thinness,
+    var fatness = 15,
         head,
         head1,
         head2,
@@ -259,11 +272,11 @@ function Gauge(gaugeName, configuration) {
     this.pointerAngle = this.valueToDegrees(this.pointerValue);
     tailAngle = this.pointerAngle + 180;
     head = this.polarToCartesian(this.pointerAngle, 0.65);
-    head1 = this.polarToCartesian(this.pointerAngle - 15, 0.12);
-    head2 = this.polarToCartesian(this.pointerAngle + 15, 0.12);
+    head1 = this.polarToCartesian(this.pointerAngle - fatness, 0.12);
+    head2 = this.polarToCartesian(this.pointerAngle + fatness, 0.12);
     tail = this.polarToCartesian(tailAngle, 0.28);
-    tail1 = this.polarToCartesian(tailAngle - 15, 0.12);
-    tail2 = this.polarToCartesian(tailAngle + 15, 0.12);
+    tail1 = this.polarToCartesian(tailAngle - fatness, 0.12);
+    tail2 = this.polarToCartesian(tailAngle + fatness, 0.12);
     return [head, head1, tail2, tail, tail1, head2, head];
   };
 

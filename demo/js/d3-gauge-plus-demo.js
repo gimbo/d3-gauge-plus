@@ -1,11 +1,17 @@
-var d3_gauge_plus_demo = function() {
+/*jslint indent: 2 */
+/*jslint white: true */
+
+/*global Gauge */
+
+var d3_gauge_plus_demo = (function() {
+
+  "use strict";
 
   var demoGauge;
 
   function createGauge(name, minValue, maxValue) {
 
     var config,
-        gauge,
         range;
 
     config = {
@@ -39,14 +45,14 @@ var d3_gauge_plus_demo = function() {
     return new Gauge(name + "GaugeContainer", config);
   }
 
-  function updateGaugeRandom(gauge) {
-    function getRandomValue(gauge) {
-      var overflow = 0; //10;
-      return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
-    }
-    var value = getRandomValue(gauge);
-    gauge.setPointer(value);
-  }
+  // function updateGaugeRandom(gauge) {
+  //   function getRandomValue(gauge) {
+  //     var overflow = 0; //10;
+  //     return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
+  //   }
+  //   var value = getRandomValue(gauge);
+  //   gauge.setPointer(value);
+  // }
 
   function tick(gauge) {
     var newValue = gauge.pointerValue + 1;
@@ -71,4 +77,4 @@ var d3_gauge_plus_demo = function() {
     }
   };
 
-}();
+}());
