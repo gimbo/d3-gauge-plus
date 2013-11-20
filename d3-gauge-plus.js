@@ -78,6 +78,10 @@ var d3_gauge_plus = (function() {
         }
       }
 
+      // Object.keys(defaults).forEach(function (key) {
+      //   setConfig(key, defaults[key]);
+      // });
+
       this.config.size = this.config.size * 0.9;
       this.config.radius = this.config.size * 0.97 / 2;
       this.config.cx = this.config.size / 2;
@@ -154,19 +158,14 @@ var d3_gauge_plus = (function() {
     this.renderRegions = function(zones) {
       var zone;
       function renderOneRegion(region, color) {
-        var band;
-        for (band in region) {
-          if (region.hasOwnProperty(band)) {
-            self.drawBand(region[band].from, region[band].to, color);
-          }
-        }
+        region.forEach(function(band) {
+          self.drawBand(band.from, band.to, color);
+        });
       }
       this.clearRegions();
-      for (zone in zones) {
-        if (zones.hasOwnProperty(zone)) {
-          renderOneRegion(zones[zone][0], zones[zone][1]);
-        }
-      }
+      zones.forEach(function(zone) {
+        renderOneRegion(zone[0], zone[1]);
+      });
       renderOneRegion(this.config.yellowZones, this.config.yellowColor);
       renderOneRegion(this.config.redZones, this.config.redColor);
     };
@@ -216,13 +215,11 @@ var d3_gauge_plus = (function() {
                       this.config.majorTickColor,
                       this.config.majorTickWidth);
 
-        // Render number for min and max values.
-        if (major === this.config.min || major === this.config.max) {
-          this.drawText(this.valueToPoint(major, 0.58),
-                        parseFloat(major.toFixed(2)),
-                        Math.round(this.config.size / 20),
-                        this.config.majorTickColor);
-        }
+        // Render numbers.
+        this.drawText(this.valueToPoint(major, 0.58),
+                      parseFloat(major.toFixed(2)),
+                      Math.round(this.config.size / 20),
+                      this.config.majorTickColor);
       }
     };
 
