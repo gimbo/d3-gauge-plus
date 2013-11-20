@@ -4,7 +4,11 @@ var d3_gauge_plus_demo = function() {
 
   function createGauge(name, minValue, maxValue) {
 
-    var config = {
+    var config,
+        gauge,
+        range;
+
+    config = {
 
       size: 500,
       rotation: 270,
@@ -21,11 +25,9 @@ var d3_gauge_plus_demo = function() {
       max: maxValue,
       initial: minValue,
 
-      transitionDuration: 50
+      transitionDuration: 300
     };
-
-    var gauge;
-    var range = config.max - config.min;
+    range = config.max - config.min;
 
     function zone(start, end) {
       return { from: config.min + range * start, to: config.min + range * end };
@@ -65,7 +67,7 @@ var d3_gauge_plus_demo = function() {
 
       // setInterval(function() { updateGaugeRandom(demoGauge); }, 300);
       // setTimeout(function() { tick(demoGauge); }, 1500);
-      setInterval(function() { tick(demoGauge); }, 1750);
+      setInterval(function() { tick(demoGauge); }, 1500);
     }
   };
 

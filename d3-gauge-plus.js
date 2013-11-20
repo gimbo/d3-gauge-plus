@@ -6,6 +6,8 @@ function Gauge(gaugeName, configuration) {
 
   this.configure = function(configuration) {
 
+    var defaults,
+        key;
     this.config = configuration;
 
     function setConfig(name, defaultValue) {
@@ -23,7 +25,7 @@ function Gauge(gaugeName, configuration) {
       }
     }
 
-    var defaults = {
+    defaults = {
 
       size: 100,
       // Offset gap degrees (anticlockwise).  0: gap at bottom; 90:
@@ -61,7 +63,7 @@ function Gauge(gaugeName, configuration) {
 
     };
 
-    for (var key in defaults) {
+    for (key in defaults) {
       setConfig(key, defaults[key]);
     }
 
@@ -122,8 +124,9 @@ function Gauge(gaugeName, configuration) {
   };
 
   this.renderLabel = function() {
+    var fontSize;
     if (undefined !== this.config.label) {
-      var fontSize = Math.round(this.config.labelSize * this.config.size / 9);
+      fontSize = Math.round(this.config.labelSize * this.config.size / 9);
       this.body.append("svg:text")
         .attr("x", this.config.cx)
         .attr("y", this.config.cy / 2 + fontSize / 2)
@@ -137,15 +140,16 @@ function Gauge(gaugeName, configuration) {
   };
 
   this.renderRegions = function(zones) {
+    var zone;
     function renderOneRegion(region, color) {
-      var i;
-      for (i in region) {
-        self.drawBand(region[i].from, region[i].to, color);
+      var band;
+      for (band in region) {
+        self.drawBand(region[band].from, region[band].to, color);
       }
     }
     this.clearRegions();
-    for (var z in zones) {
-      renderOneRegion(zones[z][0], zones[z][1]);
+    for (zone in zones) {
+      renderOneRegion(zones[zone][0], zones[zone][1]);
     }
     renderOneRegion(this.config.yellowZones, this.config.yellowColor);
     renderOneRegion(this.config.redZones, this.config.redColor);
@@ -173,10 +177,10 @@ function Gauge(gaugeName, configuration) {
   };
 
   this.renderTicks = function() {
-    var majorDelta;
-    var minorDelta;
-    var major;
-    var minor;
+    var majorDelta,
+        minorDelta,
+        major,
+        minor;
     // Render major ticks.
     if (this.config.majorTicks <= 0) {
       return;
@@ -207,14 +211,19 @@ function Gauge(gaugeName, configuration) {
   };
 
   this.renderPointer = function() {
-    var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
+    var pointerContainer,
+        pointerPath,
+        pointerLine,
+        pointer,
+        fontSize;
+    pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
     this.pointerValue = this.config.min; // Start out pointing at minimum value.
-    var pointerPath = this.buildPointerPath();
-    var pointerLine = d3.svg.line()
+    pointerPath = this.buildPointerPath();
+    pointerLine = d3.svg.line()
                   .x(function(d) { return d.x; })
                   .y(function(d) { return d.y; })
                   .interpolate("basis");
-    var pointer = pointerContainer.selectAll("path");
+    pointer = pointerContainer.selectAll("path");
     pointer.data([pointerPath])
       .enter()
       .append("svg:path")
@@ -222,7 +231,7 @@ function Gauge(gaugeName, configuration) {
       .style("fill", "#dc3912")
       .style("stroke", "#c63310")
       .style("fill-opacity", 0.7);
-    var fontSize = Math.round(this.config.labelSize * this.config.size / 9);
+    fontSize = Math.round(this.config.labelSize * this.config.size / 9);
     pointerContainer.selectAll("text")
       .data([this.pointerValue])
       .enter()
@@ -238,21 +247,31 @@ function Gauge(gaugeName, configuration) {
 
   // Compute points for initial pointer state.
   this.buildPointerPath = function() {
-    var thinness = 13;
-    var delta = this.config.range / thinness;
+    var thinness = 13,
+        delta = this.config.range / thinness,
+        head,
+        head1,
+        head2,
+        tailAngle,
+        tail,
+        tail1,
+        tail2;
     this.pointerAngle = this.valueToDegrees(this.pointerValue);
-    var head = this.polarToCartesian(this.pointerAngle, 0.65);
-    var head1 = this.polarToCartesian(this.pointerAngle - 15, 0.12);
-    var head2 = this.polarToCartesian(this.pointerAngle + 15, 0.12);
-    var tailAngle = this.pointerAngle + 180;
-    var tail = this.polarToCartesian(tailAngle, 0.28);
-    var tail1 = this.polarToCartesian(tailAngle - 15, 0.12);
-    var tail2 = this.polarToCartesian(tailAngle + 15, 0.12);
+    tailAngle = this.pointerAngle + 180;
+    head = this.polarToCartesian(this.pointerAngle, 0.65);
+    head1 = this.polarToCartesian(this.pointerAngle - 15, 0.12);
+    head2 = this.polarToCartesian(this.pointerAngle + 15, 0.12);
+    tail = this.polarToCartesian(tailAngle, 0.28);
+    tail1 = this.polarToCartesian(tailAngle - 15, 0.12);
+    tail2 = this.polarToCartesian(tailAngle + 15, 0.12);
     return [head, head1, tail2, tail, tail1, head2, head];
   };
 
   this.setPointer = function(newValue, duration) {
-    var valueForAngle;
+    var valueForAngle,
+        oldAngle = this.pointerAngle,
+        newAngle,
+        pointerContainer = this.body.select(".pointerContainer");
     if ((newValue > self.config.max) && this.config.clampOverflow) {
       newValue = self.config.max;
     } else if ((newValue < self.config.min) && this.config.clampUnderflow) {
@@ -268,11 +287,9 @@ function Gauge(gaugeName, configuration) {
     if (undefined === duration) {
       duration = this.config.transitionDuration;
     }
-    var oldAngle = this.pointerAngle;
-    var newAngle = self.valueToDegrees(valueForAngle) + this.config.rotation - (this.config.gap / 2);
+    newAngle = self.valueToDegrees(valueForAngle) + this.config.rotation - (this.config.gap / 2);
     this.pointerAngle = newAngle;
     this.pointerValue = newValue;
-    var pointerContainer = this.body.select(".pointerContainer");
     this.rotateElement(pointerContainer.selectAll("path"),
                        oldAngle,
                        newAngle,
@@ -289,9 +306,13 @@ function Gauge(gaugeName, configuration) {
   // Convert a value (on the guage) into the corresponding angle on
   // the gauge.
   this.valueToDegrees = function(value) {
+    var valueProp,
+        rotate,
+        arc,
+        angleFromStart;
     // Value as a proportion of the range.  Somewhere between 0 and 1
     // (or slightly out of that ranfge for underflow/overflow).
-    var valueProp = (value - this.config.min) / this.config.range; // 0 to 1
+    valueProp = (value - this.config.min) / this.config.range;
     // 0 rotation (in config) means gap at bottom.  But in drawing
     // terms, 0 degrees is upwards (assuming the computation goes via
     // polarToCartesian below, which it should), so we rotate
@@ -299,11 +320,11 @@ function Gauge(gaugeName, configuration) {
     // bottom, then rotate by half of whatever gap has been requested
     // in order to centre the gap there.  Finally add whatever
     // rotation the config asks for.
-    var rotate = 180 + (this.config.gap / 2) + this.config.rotation;
+    rotate = 180 + (this.config.gap / 2) + this.config.rotation;
     // arc is the number of degrees covered by the gauge - it defaults
     // to 270 (ie a gap of 90 degrees).
-    var arc = 360 - this.config.gap;
-    var angleFromStart = valueProp * arc + rotate;
+    arc = 360 - this.config.gap;
+    angleFromStart = valueProp * arc + rotate;
     return angleFromStart;
 
   };
