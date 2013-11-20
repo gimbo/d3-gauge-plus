@@ -1,7 +1,7 @@
 /*jslint indent: 2 */
 /*jslint white: true */
 
-/*global Gauge */
+/*global d3_gauge_plus */
 
 var d3_gauge_plus_demo = (function() {
 
@@ -42,7 +42,7 @@ var d3_gauge_plus_demo = (function() {
     config.greenZones = [zone(0.3, 0.5), zone(0.6, 0.75)];
     config.yellowZones = [zone(0.75, 0.9)];
     config.redZones = [zone(0, 0.2), zone(0.9, 1)];
-    return new Gauge(name + "GaugeContainer", config);
+    return new d3_gauge_plus.Gauge(name + "GaugeContainer", config);
   }
 
   // function updateGaugeRandom(gauge) {
