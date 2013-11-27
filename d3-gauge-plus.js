@@ -1,4 +1,5 @@
 /*jslint indent: 2 */
+/*jslint nomen: true*/
 /*jslint white: true */
 
 /*global _ */
@@ -67,25 +68,22 @@ var d3_gauge_plus = (function() {
 
       /**
        * Draw an arc.
-       * @param start Start angle of arc, in degrees.
-       * @param end End angle of arc, in degrees.
-       * @param fillColor Arc's colour, a string, e.g. "#000".
+       * @param startAngle Start angle of arc, in degrees.
+       * @param endAngle End angle of arc, in degrees.
        * @param innerRadius Inner radius of arc, as a proportion of
        *     the disk's radius (i.e. a number between 0 and 1).
        * @param outerRadius Outer radius of arc, as a proportion of
        *     the disk's radius (i.e. a number between 0 and 1).
-       * @param classes Classes to add to the arc.  XXX Why?
+       * @param fillColor Arc's colour, a string, e.g. "#000".
        */
-      drawArc: function drawArc(start, end, fillColor, innerRadius, outerRadius, classes) {
-        var self = this;
-        var arc = this.body.append("svg:path")
-          .style("fill", fillColor);
-        if (classes !== undefined) {
-          arc.attr("class", classes);
-        }
+      drawArc: function drawArc(startAngle, endAngle, innerRadius,
+        outerRadius, fillColor) {
+        var self = this,
+          arc = this.body.append("svg:path")
+              .style("fill", fillColor);
         arc.attr("d", d3.svg.arc()
-              .startAngle(this.degreesToRadians(start))
-              .endAngle(this.degreesToRadians(end))
+              .startAngle(this.degreesToRadians(startAngle))
+              .endAngle(this.degreesToRadians(endAngle))
               .innerRadius(innerRadius * this.radius)
               .outerRadius(outerRadius * this.radius))
           .attr("transform", function() {
@@ -97,23 +95,24 @@ var d3_gauge_plus = (function() {
       /**
        * Draw a radial line.
        * @param angle Angle at which to draw radial, in degrees.
-       * @param inner Inner limit of radial, as a proportion of the
-       *     disk's radius (i.e. a number between 0 and 1).
-       * @param outer Outer limit of radial, as a proportion of the
-       *     disk's radius (i.e. a number between 0 and 1).
-       * @param color Radial's colour, a string, e.g. "#000".
-       * @param width Width a radial, a string, e.g. "1px".
+       * @param innerRadius Inner limit of radial, as a proportion of
+       *     the disk's radius (i.e. a number between 0 and 1).
+       * @param outerRadius Outer limit of radial, as a proportion of
+       *     the disk's radius (i.e. a number between 0 and 1).
+       * @param strokeColor Radial's colour, a string, e.g. "#000".
+       * @param strokeWidth Width of radial, a string, e.g. "1px".
        */
-      drawRadial: function drawRadial(angle, inner, outer, color, width) {
-        var start = this.polarToCartesian(angle, inner),
-          end = this.polarToCartesian(angle, outer);
+      drawRadial: function drawRadial(angle, innerRadius, outerRadius,
+        strokeColor, strokeWidth) {
+        var start = this.polarToCartesian(angle, innerRadius),
+          end = this.polarToCartesian(angle, outerRadius);
         this.body.append("svg:line")
           .attr("x1", start.x)
           .attr("y1", start.y)
           .attr("x2", end.x)
           .attr("y2", end.y)
-          .style("stroke", color)
-          .style("stroke-width", width);
+          .style("stroke", strokeColor)
+          .style("stroke-width", strokeWidth);
         return this;
       },
 
@@ -127,14 +126,15 @@ var d3_gauge_plus = (function() {
        * @param rotation Angle by which to rotate text (0 is no
        *     rotation).
        * @param text The text to draw.
+       * @param fillColor Text color, a string, e.g. "#000".
        * @param fontSize Font size, as a proportion of the disk's
        *     radius (i.e. a number between 0 and 1).
-       * @param color Text color, a string, e.g. "#000".
        */
-      drawText: function drawText(angle, radius, rotation, text, fontSize, color) {
+      drawText: function drawText(angle, radius, rotation, text, fillColor,
+        fontSize) {
         var loc = this.polarToCartesian(angle, radius),
-          size = Math.floor(this.radius * fontSize),
-          dy = Math.floor((this.radius * fontSize) / 2);
+          size = Math.floor(this.radius * fontSize);
+          // dy = Math.floor((this.radius * fontSize) / 2);
         // loc.y = loc.y - dy;
         this.body.append("svg:text")
             .attr("x", loc.x)
@@ -143,7 +143,7 @@ var d3_gauge_plus = (function() {
             .attr("text-anchor", "middle")
           .text(text)
             .style("font-size", size + "px")
-            .style("fill", color)
+            .style("fill", fillColor)
             .style("stroke-width", "0px")
           .attr("transform", function() {
             return "rotate(" + rotation + "," + loc.x + "," + loc.y + ")";
@@ -156,7 +156,7 @@ var d3_gauge_plus = (function() {
     return {
       createDisk: function createDisk(config) {
         var newDisk = _.extend({}, diskProto, config);
-        console.log("CreateDisk", config, newDisk);
+        // console.log("CreateDisk", config, newDisk);
         newDisk.body = d3.select("#" + newDisk.name)
           .append("svg:svg")
           .attr("class", newDisk.classes)
@@ -171,8 +171,6 @@ var d3_gauge_plus = (function() {
   function Gauge(gaugeName, configuration) {
 
     this.gaugeName = gaugeName;
-
-    var boo = _.each;
 
     var self = this; // for internal d3 functions
 
@@ -258,7 +256,7 @@ var d3_gauge_plus = (function() {
       clamp("transitionDuration", 0);
       clamp("gap", 0, 360);
 
-      console.log(this.config);
+      // console.log(this.config);
     };
 
     this.render = function() {
@@ -319,7 +317,6 @@ var d3_gauge_plus = (function() {
     };
 
     this.renderRegions = function(zones) {
-      var zone;
       function renderOneRegion(region, color) {
         region.forEach(function(band) {
           self.drawBand(band.from, band.to, color);
