@@ -18,7 +18,7 @@ var d3_gauge_plus = (function() {
       radius: 200,
       classes: "disk",
 
-      defaults: {
+      defaultStyles: {
         "fill": "#000",
         "stroke": "#000",
         "stroke-width": "1px"
@@ -50,7 +50,7 @@ var d3_gauge_plus = (function() {
       /**
        * Set some styles on some object.  Given a target object and a
        * list of style names to set, it sets each of those styles on
-       * the object to either the disk object's defaults or (if
+       * the object to either the disk object's default styles or (if
        * specified here) an override value.
        * @private
        * @param {Object} target The object whose styles we wish to
@@ -67,7 +67,7 @@ var d3_gauge_plus = (function() {
        *     e.g. "1px".
        */
       setStyles: function setStyles(target, styles, overrides) {
-        var useStyles = _.extend({}, this.defaults, overrides);
+        var useStyles = _.merge({}, this.defaultStyles, overrides);
         styles.forEach(function(style) {
           if (useStyles[style] !== undefined) {
             target.style(style, useStyles[style]);
@@ -79,8 +79,8 @@ var d3_gauge_plus = (function() {
        * Draw a circle.
        * @param {Number} radius Radius of circle, as a proportion of the disk's
        *     radius (i.e. a number between 0 and 1).
-       * @param {Object} [styles] Overrides of the disk's defaults for
-       *     drawing.
+       * @param {Object} [styles] Overrides of the disk's default
+       *     styles for drawing.
        * @param {String} [styles.fill] The circle's fill colour,
        *     e.g. "#000".
        * @param {String} [styles.stroke] The circle's stroke colour
@@ -107,7 +107,7 @@ var d3_gauge_plus = (function() {
        * @param {Number} outerRadius Outer radius of arc, as a
        *     proportion of the disk's radius (i.e. a number between 0
        *     and 1).
-       * @param {Object} [styles] Overrides of the disk's defaults for
+       * @param {Object} [styles] Overrides of the disk's default styles for
        *     drawing.
        * @param {String} [styles.fillColor] The arc's colour, e.g. "#000".
        */
@@ -137,7 +137,7 @@ var d3_gauge_plus = (function() {
        * @param {Number} outerRadius Outer limit of radial, as a
        *     proportion of the disk's radius (i.e. a number between 0
        *     and 1).
-       * @param {Object} [styles] Overrides of the disk's defaults for
+       * @param {Object} [styles] Overrides of the disk's default styles for
        *     drawing.
        * @param {String} [styles.strokeColor] The arc's stroke colour,
        *     e.g. "#000".
@@ -168,8 +168,8 @@ var d3_gauge_plus = (function() {
        * @param {Number} fontSize Font size, as a proportion of the
        *     disk's radius (i.e. a number between 0 and 1).
        * @param {String} text The text to draw.
-       * @param {Object} [styles] Overrides of the disk's defaults for
-       *     drawing.
+       * @param {Object} [styles] Overrides of the disk's default
+       *     styles for drawing.
        * @param {String} [styles.fillColor] The text's fill colour,
        *     e.g. "#000".
        */
@@ -197,7 +197,7 @@ var d3_gauge_plus = (function() {
 
     return {
       createDisk: function createDisk(config) {
-        var newDisk = _.extend({}, diskProto, config);
+        var newDisk = _.merge({}, diskProto, config);
         // console.log("CreateDisk", config, newDisk);
         newDisk.body = d3.select("#" + newDisk.name)
           .append("svg:svg")
