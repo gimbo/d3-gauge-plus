@@ -71,7 +71,11 @@ var d3_gauge_plus_demo = (function() {
       td2 = d3_gauge_plus.disk.createDisk({
         name: "diskTesting2",
         radius: 150
-    });
+      }),
+      td3 = d3_gauge_plus.disk.createDisk({
+        name: "diskTesting3",
+        radius: 150
+      });
     td1.drawCircle(0.95, "#ccc", "#000", "1px")
         .drawCircle(0.85, "#fff", "#ccc", "0.5px")
         .drawArc(0, 90, "black", 0.65, 0.85)
@@ -84,6 +88,16 @@ var d3_gauge_plus_demo = (function() {
         .drawRadial(45, 0.4, 0.8, "black", "2px")
         .drawRadial(55, 0.4, 0.8, "black", "2px")
         .drawRadial(65, 0.4, 0.8, "black", "2px");
+    td3.drawCircle(0.95, "#eee", "#000", "1px")
+        // .drawCircle(0.8, "#eee", "#000", "1px")
+        .drawText(0, 0.75, 0, "0", 0.2, "#000")
+        .drawText(90, 0.75, 90, "90", 0.2, "#000")
+        .drawText(180, 0.75, 180, "180", 0.2, "#000")
+        .drawText(270, 0.75, 270, "270", 0.2, "#000")
+        .drawRadial(0, 0.4, 0.7, "black", "2px")
+        .drawRadial(90, 0.4, 0.7, "black", "2px")
+        .drawRadial(180, 0.4, 0.7, "black", "2px")
+        .drawRadial(270, 0.4, 0.7, "black", "2px");
   }
 
   return {

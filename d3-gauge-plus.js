@@ -81,6 +81,26 @@ var d3_gauge_plus = (function() {
           .style("stroke", color)
           .style("stroke-width", width);
         return this;
+      },
+
+      drawText: function drawText(angle, radius, rotation, text, fontSize, color) {
+        var loc = this.polarToCartesian(angle, radius),
+          size = Math.floor(this.radius * fontSize),
+          dy = Math.floor((this.radius * fontSize) / 2);
+        // loc.y = loc.y - dy;
+        this.body.append("svg:text")
+            .attr("x", loc.x)
+            .attr("y", loc.y) // this.config.cy / 2 + fontSize / 2)
+            .attr("dy", 0) // dy) // fontSize / 2)
+            .attr("text-anchor", "middle")
+          .text(text)
+            .style("font-size", size + "px")
+            .style("fill", color)
+            .style("stroke-width", "0px")
+          .attr("transform", function() {
+            return "rotate(" + rotation + "," + loc.x + "," + loc.y + ")";
+          });
+        return this;
       }
 
     };
