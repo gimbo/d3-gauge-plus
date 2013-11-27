@@ -21,10 +21,12 @@ var d3_gauge_plus = (function() {
         return degrees * Math.PI / 180;
       },
 
-      // Convert polar coordinate - specified by angle t (in degrees,
-      // where 0 degrees is upwards) and distance r (as proportion of
-      // radius, so 0 is centre and 1 is at circumference) - into
-      // Cartesian coordinate.
+      /**
+       * Convert from polar to cartesian co-ordinates.
+       * @param t Angle in degrees, where 0 degrees is upwards.
+       * @param r Distance from disk's centre, as a proportion of the
+       *     disk's radius (i.e. a number between 0 and 1).
+       */
       polarToCartesian: function polarToCartesian(t, r) {
         // We add 90 degrees to t here so that t=0 degrees means "upwards"
         // (otherwise it means "to the left", which is just weird).
@@ -35,6 +37,17 @@ var d3_gauge_plus = (function() {
         };
       },
 
+      /**
+       * Draw a circle.
+       * @param radius Radius of circle, as a proportion of the disk's
+       *     radius (i.e. a number between 0 and 1).
+       * @param fillColor A string, the fill colour for the circle,
+       *     e.g. "#000".
+       * @param strokeColor A string, the stroke colour for the circle,
+       *     e.g. "#000".
+       * @param strokeWidth A string, the stroke width for the circle,
+       *     e.g. "1px".
+       */
       drawCircle: function drawCircle(radius, fillColor, strokeColor, strokeWidth) {
         var circle = this.body.append("svg:circle")
             .attr("cx", this.radius)
@@ -52,6 +65,17 @@ var d3_gauge_plus = (function() {
         return this;
       },
 
+      /**
+       * Draw an arc.
+       * @param start Start angle of arc, in degrees.
+       * @param end End angle of arc, in degrees.
+       * @param fillColor Arc's colour, a string, e.g. "#000".
+       * @param innerRadius Inner radius of arc, as a proportion of
+       *     the disk's radius (i.e. a number between 0 and 1).
+       * @param outerRadius Outer radius of arc, as a proportion of
+       *     the disk's radius (i.e. a number between 0 and 1).
+       * @param classes Classes to add to the arc.  XXX Why?
+       */
       drawArc: function drawArc(start, end, fillColor, innerRadius, outerRadius, classes) {
         var self = this;
         var arc = this.body.append("svg:path")
@@ -70,6 +94,16 @@ var d3_gauge_plus = (function() {
         return this;
       },
 
+      /**
+       * Draw a radial line.
+       * @param angle Angle at which to draw radial, in degrees.
+       * @param inner Inner limit of radial, as a proportion of the
+       *     disk's radius (i.e. a number between 0 and 1).
+       * @param outer Outer limit of radial, as a proportion of the
+       *     disk's radius (i.e. a number between 0 and 1).
+       * @param color Radial's colour, a string, e.g. "#000".
+       * @param width Width a radial, a string, e.g. "1px".
+       */
       drawRadial: function drawRadial(angle, inner, outer, color, width) {
         var start = this.polarToCartesian(angle, inner),
           end = this.polarToCartesian(angle, outer);
@@ -83,6 +117,20 @@ var d3_gauge_plus = (function() {
         return this;
       },
 
+      /**
+       * Draw some text.
+       * @param angle Angular component of polar co-ordinate at which
+       *     to draw text.
+       * @param radius Radial component of polar co-ordinate at which
+       *     to draw text; a proportion of the disk's radius (i.e. a
+       *     number between 0 and 1).
+       * @param rotation Angle by which to rotate text (0 is no
+       *     rotation).
+       * @param text The text to draw.
+       * @param fontSize Font size, as a proportion of the disk's
+       *     radius (i.e. a number between 0 and 1).
+       * @param color Text color, a string, e.g. "#000".
+       */
       drawText: function drawText(angle, radius, rotation, text, fontSize, color) {
         var loc = this.polarToCartesian(angle, radius),
           size = Math.floor(this.radius * fontSize),
