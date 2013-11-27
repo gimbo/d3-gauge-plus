@@ -2,6 +2,7 @@
 /*jslint white: true */
 
 /*global d3_gauge_plus */
+/*global setInterval */
 
 var d3_gauge_plus_demo = (function() {
 
