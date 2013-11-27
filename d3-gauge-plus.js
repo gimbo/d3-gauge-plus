@@ -1,15 +1,110 @@
 /*jslint indent: 2 */
 /*jslint white: true */
 
+/*global _ */
 /*global d3 */
 
 var d3_gauge_plus = (function() {
 
   "use strict";
 
+  // A context for drawing into SVG using polar co-ordinates.
+  var disk = (function() {
+
+    var diskProto = {
+
+      name: "defaultDisk",
+      radius: 200,
+      classes: "disk",
+
+      degreesToRadians: function degreesToRadians(degrees) {
+        return degrees * Math.PI / 180;
+      },
+
+      // Convert polar coordinate - specified by angle t (in degrees,
+      // where 0 degrees is upwards) and distance r (as proportion of
+      // radius, so 0 is centre and 1 is at circumference) - into
+      // Cartesian coordinate.
+      polarToCartesian: function polarToCartesian(t, r) {
+        // We add 90 degrees to t here so that t=0 degrees means "upwards"
+        // (otherwise it means "to the left", which is just weird).
+        var radians = this.degreesToRadians(t + 90);
+        return {
+          x: this.radius - this.radius * r * Math.cos(radians), // XXX
+          y: this.radius - this.radius * r * Math.sin(radians)  // XXX
+        };
+      },
+
+      drawCircle: function drawCircle(radius, fillColor, strokeColor, strokeWidth) {
+        var circle = this.body.append("svg:circle")
+            .attr("cx", this.radius)
+            .attr("cy", this.radius)
+            .attr("r", this.radius * radius);
+        if (fillColor !== undefined) {
+          circle.style("fill", fillColor);
+        }
+        if (strokeColor !== undefined) {
+          circle.style("stroke", strokeColor);
+        }
+        if (strokeWidth !== undefined) {
+          circle.style("stroke-width", strokeWidth);
+        }
+        return this;
+      },
+
+      drawArc: function drawArc(start, end, fillColor, innerRadius, outerRadius, classes) {
+        var self = this;
+        var arc = this.body.append("svg:path")
+          .style("fill", fillColor);
+        if (classes !== undefined) {
+          arc.attr("class", classes);
+        }
+        arc.attr("d", d3.svg.arc()
+              .startAngle(this.degreesToRadians(start))
+              .endAngle(this.degreesToRadians(end))
+              .innerRadius(innerRadius * this.radius)
+              .outerRadius(outerRadius * this.radius))
+          .attr("transform", function() {
+            return "translate(" + self.radius + ", " + self.radius + ")";
+          });
+        return this;
+      },
+
+      drawRadial: function drawRadial(angle, inner, outer, color, width) {
+        var start = this.polarToCartesian(angle, inner),
+          end = this.polarToCartesian(angle, outer);
+        this.body.append("svg:line")
+          .attr("x1", start.x)
+          .attr("y1", start.y)
+          .attr("x2", end.x)
+          .attr("y2", end.y)
+          .style("stroke", color)
+          .style("stroke-width", width);
+        return this;
+      }
+
+    };
+
+    return {
+      createDisk: function createDisk(config) {
+        var newDisk = _.extend({}, diskProto, config);
+        console.log("CreateDisk", config, newDisk);
+        newDisk.body = d3.select("#" + newDisk.name)
+          .append("svg:svg")
+          .attr("class", newDisk.classes)
+          .attr("width", newDisk.radius * 2)
+          .attr("height", newDisk.radius * 2);
+        return newDisk;
+      }
+    };
+
+  }());
+
   function Gauge(gaugeName, configuration) {
 
     this.gaugeName = gaugeName;
+
+    var boo = _.each;
 
     var self = this; // for internal d3 functions
 
@@ -410,8 +505,10 @@ var d3_gauge_plus = (function() {
     this.configure(configuration);
   }
 
+  // Module interface.
   return {
-    Gauge: Gauge
+    Gauge: Gauge,
+    disk: disk
   };
 
 }());
