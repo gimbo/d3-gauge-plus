@@ -21,7 +21,8 @@ var d3_gauge_plus = (function() {
       defaultStyles: {
         "fill": "#000",
         "stroke": "#000",
-        "stroke-width": "1px"
+        "stroke-width": "1px",
+        "font-family": "sans-serif"
       },
 
       degreesToRadians: function degreesToRadians(degrees) {
@@ -65,6 +66,8 @@ var d3_gauge_plus = (function() {
        *     e.g. "#000".
        * @param {String} [overrides.stroke-width] A stroke width,
        *     e.g. "1px".
+       * @param {String} [overrides.font-family] A font family,
+       *     e.g. "Courier New".
        */
       setStyles: function setStyles(target, styles, overrides) {
         var useStyles = _.merge({}, this.defaultStyles, overrides);
@@ -172,6 +175,8 @@ var d3_gauge_plus = (function() {
        *     styles for drawing.
        * @param {String} [styles.fillColor] The text's fill colour,
        *     e.g. "#000".
+       * @param {String} [styles.font-family] The text's font family,
+       *     e.g. "Courier New".
        */
       drawText: function drawText(angle, radius, rotation, fontSize, text,
         styles) {
@@ -186,7 +191,7 @@ var d3_gauge_plus = (function() {
               .attr("text-anchor", "middle")
               .text(text)
               .style("font-size", size + "px");
-        this.setStyles(tsvg, ["fill"], styles);
+        this.setStyles(tsvg, ["fill", "font-family"], styles);
         tsvg.attr("transform", function() {
           return "rotate(" + rotation + "," + loc.x + "," + loc.y + ")";
         });
