@@ -112,9 +112,9 @@ var d3_gauge_plus = (function() {
        *     and 1).
        * @param {Object} [styles] Overrides of the disk's default styles for
        *     drawing.
-       * @param {String} [styles.strokeColor] The radial's stroke colour,
+       * @param {String} [styles.stroke] The radial's stroke colour,
        *     e.g. "#000".
-       * @param {String} [styles.strokeWidth] The radial's stroke width,
+       * @param {String} [styles.stroke-width] The radial's stroke width,
        *     e.g. "1px".
        */
       drawRadial: function drawRadial(angle, innerRadius, outerRadius, styles) {
@@ -141,10 +141,10 @@ var d3_gauge_plus = (function() {
        *     and 1).
        * @param {Object} [styles] Overrides of the disk's default styles for
        *     drawing.
-       * @param {String} [styles.fillColor] The arc's colour, e.g. "#000".
-       * @param {String} [styles.strokeColor] The arc's stroke colour,
+       * @param {String} [styles.fill] The arc's colour, e.g. "#000".
+       * @param {String} [styles.stroke] The arc's stroke colour,
        *     e.g. "#000".
-       * @param {String} [styles.strokeWidth] The arc's stroke width,
+       * @param {String} [styles.stroke-width] The arc's stroke width,
        *     e.g. "1px".
        */
       drawArc: function drawArc(startAngle, endAngle, innerRadius,
@@ -177,7 +177,7 @@ var d3_gauge_plus = (function() {
        * @param {String} text The text to draw.
        * @param {Object} [styles] Overrides of the disk's default
        *     styles for drawing.
-       * @param {String} [styles.fillColor] The text's fill colour,
+       * @param {String} [styles.fill] The text's fill colour,
        *     e.g. "#000".
        * @param {String} [styles.font-family] The text's font family,
        *     e.g. "Courier New".
