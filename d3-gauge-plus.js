@@ -113,12 +113,16 @@ var d3_gauge_plus = (function() {
        * @param {Object} [styles] Overrides of the disk's default styles for
        *     drawing.
        * @param {String} [styles.fillColor] The arc's colour, e.g. "#000".
+       * @param {String} [styles.strokeColor] The arc's stroke colour,
+       *     e.g. "#000".
+       * @param {String} [styles.strokeWidth] The arc's stroke width,
+       *     e.g. "1px".
        */
       drawArc: function drawArc(startAngle, endAngle, innerRadius,
         outerRadius, styles) {
         var self = this,
           arc = this.body.append("svg:path");
-        this.setStyles(arc, ["fill"], styles);
+        this.setStyles(arc, ["fill", "stroke", "stroke-width"], styles);
         arc.attr("d", d3.svg.arc()
               .startAngle(this.degreesToRadians(startAngle))
               .endAngle(this.degreesToRadians(endAngle))
