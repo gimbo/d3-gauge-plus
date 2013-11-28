@@ -15,7 +15,7 @@ var d3_gauge_plus = (function() {
     var diskProto = {
 
       name: "defaultDisk",
-      radius: 200,
+      radius: 100,
       classes: "disk",
 
       defaultStyles: {
