@@ -101,6 +101,35 @@ var d3_gauge_plus = (function() {
       },
 
       /**
+       * Draw a radial line.
+       * @param {Number} angle Angle at which to draw radial, in
+       *     degrees.
+       * @param {Number} innerRadius Inner limit of radial, as a
+       *     proportion of the disk's radius (i.e. a number between 0
+       *     and 1).
+       * @param {Number} outerRadius Outer limit of radial, as a
+       *     proportion of the disk's radius (i.e. a number between 0
+       *     and 1).
+       * @param {Object} [styles] Overrides of the disk's default styles for
+       *     drawing.
+       * @param {String} [styles.strokeColor] The radial's stroke colour,
+       *     e.g. "#000".
+       * @param {String} [styles.strokeWidth] The radial's stroke width,
+       *     e.g. "1px".
+       */
+      drawRadial: function drawRadial(angle, innerRadius, outerRadius, styles) {
+        var start = this.polarToCartesian(angle, innerRadius),
+          end = this.polarToCartesian(angle, outerRadius),
+          radial = this.body.append("svg:line")
+              .attr("x1", start.x)
+              .attr("y1", start.y)
+              .attr("x2", end.x)
+              .attr("y2", end.y);
+        this.setStyles(radial, ["stroke", "stroke-width"], styles);
+        return this;
+      },
+
+      /**
        * Draw an arc.
        * @param {Number} startAngle Start angle of arc, in degrees.
        * @param {Number} endAngle End angle of arc, in degrees.
@@ -131,35 +160,6 @@ var d3_gauge_plus = (function() {
           .attr("transform", function() {
             return "translate(" + self.radius + ", " + self.radius + ")";
           });
-        return this;
-      },
-
-      /**
-       * Draw a radial line.
-       * @param {Number} angle Angle at which to draw radial, in
-       *     degrees.
-       * @param {Number} innerRadius Inner limit of radial, as a
-       *     proportion of the disk's radius (i.e. a number between 0
-       *     and 1).
-       * @param {Number} outerRadius Outer limit of radial, as a
-       *     proportion of the disk's radius (i.e. a number between 0
-       *     and 1).
-       * @param {Object} [styles] Overrides of the disk's default styles for
-       *     drawing.
-       * @param {String} [styles.strokeColor] The arc's stroke colour,
-       *     e.g. "#000".
-       * @param {String} [styles.strokeWidth] The arc's stroke width,
-       *     e.g. "1px".
-       */
-      drawRadial: function drawRadial(angle, innerRadius, outerRadius, styles) {
-        var start = this.polarToCartesian(angle, innerRadius),
-          end = this.polarToCartesian(angle, outerRadius),
-          radial = this.body.append("svg:line")
-              .attr("x1", start.x)
-              .attr("y1", start.y)
-              .attr("x2", end.x)
-              .attr("y2", end.y);
-        this.setStyles(radial, ["stroke", "stroke-width"], styles);
         return this;
       },
 
