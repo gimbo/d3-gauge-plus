@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="css/styles.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="css/demos.css" type="text/css" media="screen" />
     <script src="js/lodash.min.js" charset="utf-8"></script>
     <script src="js/d3.v3.min.js" charset="utf-8"></script>
     <script src="../d3-gauge-plus.js" charset="utf-8"></script>
@@ -15,24 +16,265 @@
     <div class="wrapper">
 
       <header>
-        <h1 class="header">Disk drawing demos</h1>
-        <p class="header">d3-gauge-plus builds its gauges upon a lower-level set of primitives for drawing onto a disk.  This page demonstrates those primitives in use.</p>
-        <p>More to come...</p>
+        <h1 class="header">Disk drawing primitives</h1>
+        <p class="header"><a href="http://gimbo.github.io/d3-gauge-plus/">d3-gauge-plus</a> builds its gauges upon a lower-level set of primitives for drawing onto a disk.  This page demonstrates those primitives in use.</p>
       </header>
 
       <section>
-        <h1>Basic disk demos</h1>
-        <span id="diskTesting1"></span>
-        <span id="diskTesting2"></span>
+
+        <h1>Introduction</h1>
+        <p>A disk object as returned by <code>d3_gauge_plus.disk.createDisk</code> provides a space into which you can conveniently draw certain primitives using polar co-ordinates.  Specifically, we have:</p>
+        <ul>
+          <li><code>drawCircle</code> - draw circles centred on the centre of the disk.</li>
+          <li><code>drawRadial</code> - draw radial lines, i.e. lines emanating from the centre of the disk.</li>
+          <li><code>drawArc</code> - draw arcs.</li>
+          <li><code>drawText</code> - draw text (which can be rotated).</li>
+        </ul>
+        <p>On this page I'll demonstrate these capabilities.</p>
+
       </section>
 
+
+
       <section>
-        <h1>Text on disks</h1>
-        <p>With text rotation.</p>
-        <span id="diskTextDemo1"></span>
-        <p>Without text rotation.</p>
-        <span id="diskTextDemo2"></span>
+
+        <h1>Empty disk</h1>
+        <p>A disk provides a drawing context but on its own has no appearance (though it does take up some space).  Here's how to create an empty disk:</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+  name: "diskEmpty"
+});</code></pre>
+        <p>This creates an SVG element which will contain the disk as a child of the DOM element with the id <code>diskEmpty</code> (so that element needs to exist in your DOM, otherwise nothing happens).</p>
+        <p>The result looks like this:</p>
+        <p id="diskEmpty"></p>
+        <p>It's completely empty: a 200x200 pixel space (because the default radius for a disk is 100 pixels).  By default the created SVG element has a class of <code>disk</code> and for illustrative purposes this page has a CSS rule which draws a border around elements with that class - thus there's a border here (and on most of the examples on this page).  That CSS rule need not exist in general, of course: disks don't have to have borders (and by default they don't).</p>
+        <p>We can override the CSS class(es) of the created SVG element quite easily - so here's an example which (on this page) doesn't have a border - and we just see a space:</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+  name: "diskEmptyNoBorder",
+  classes: "noborder"
+});</code></pre>
+        <p id="diskEmptyNoBorder"></p>
+        <p>Finally, here's an empty disk with a smaller radius:</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+  name: "diskEmptyRadius50",
+  radius: 50
+});</code></pre>
+        <p id="diskEmptyRadius50"></p>
+        <p>(In all of these examples, target DOM element happens to be a <code>p</code> - but of course it could be anything we can attach a child element to.)</p>
+        <p>So far, so boring.  Let's draw something...</p>
+
       </section>
+
+
+
+      <section>
+
+        <h1>Circles</h1>
+        <p><code>drawCircle</code> draws a circle of some radius centred on the disk's centre.</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+    name: "diskCircles1",
+  }).drawCircle(1);</code></pre>
+        <p id="diskCircles1"></p>
+        <p>This draws a circle of radius 1 with the disk's default drawing styles. The radius is specified as a fraction of the disk's radius, so should normally be between 0 and 1 - all the disk drawing primitives use this notion. When a disk is created you can override its default drawing styles (see below), but if you don't, the defaults are:</p>
+        <ul>
+          <li><code>fill</code>: <code>"#000"</code>
+          <li><code>stroke</code>: <code>"#000"</code>
+          <li><code>stroke-width</code>: <code>"1px"</code>
+          <li><code>font-family</code>: <code>"sans-serif"</code>
+        </ul>
+        <p>Let's play with this a bit:</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+    name: "diskCircles2",
+  }).drawCircle(1.2, { fill: "red",
+                       stroke: "none" })
+    .drawCircle(0.8, { fill: "white",
+                       stroke: "blue",
+                       "stroke-width": "5px" })
+    .drawCircle(0.3, { fill: "green" })
+    .drawCircle(0.4, { fill: "yellow" })
+    .drawCircle(0.5, { fill: "none" });</code></pre>
+        <p id="diskCircles2"></p>
+        <p>There's quite a lot being demonstrated here...</p>
+        <!-- <ol> -->
+          <p>The first <code>drawCircle</code> shows that you can use a radius > 1; of course if it's > 1.41 or so it will just fill the frame.  This circle's filled with red and has no outline at al.</p>
+          <p>The second <code>drawCircle</code> draws a white-filled circle whose radius is 80% of the disk's total radius, with a blue outline 5 pixels think.  Fairly simple.</p>
+          <p>The third <code>drawCircle</code> draws a green-filled circle of radius 0.3 (ie 30% of disk's radius) - but we can't see it because the next operation obscures it...</p>
+          <p>The fourth <code>drawCircle</code> draws a yellow-filled circle of radius 0.4, which hides the green circle just drawn (although it's still there in the SVG).  This yellow circle has a 1px black outline, using the disk's default styles (as discussed above).</p>
+          <p>The fifth and final <code>drawCircle</code> draws a circle of radius 0.5 but with no fill - so it <strong>doesn't</strong> hide the yellow circle.  It also inherits the default stroke styles from the disk, so we get a black circle 1px thick, whose interior is transparent.</p>
+        <!-- </ol> -->
+
+
+
+        <h2>Over-riding default styles</h2>
+        <p>When you create a disk you can override any or all of its default drawing styles...</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+    name: "diskStyles",
+    defaultStyles: {
+      fill: "none",
+      "stroke-width": "3px"
+    }
+  }).drawCircle(0.9)
+    .drawCircle(0.7)
+    .drawCircle(0.5, { stroke: "green",
+                       fill: "blue" })
+    .drawCircle(0.3, { fill: "yellow" })
+    .drawCircle(0.2, { stroke: "red" });</code></pre>
+        <p id="diskStyles"></p>
+        <p>So here we've told it to draw non-filled circles by default, with 3 pixel outlines - but we didn't override the default stoke colour, which is thus still black.  And of course each <code>drawCircle</code> call can override the styles itself.</p>
+        <p>In general you probably <i>don't</i> want to override <code>fill</code> to <code>none</code>, even though it makes drawing transparent circles the default.  The reason is that this style is also used for the other drawing operations, as we'll see below.</p>
+
+      </section>
+
+
+
+      <section>
+
+        <h1>Radial lines</h1>
+        <p><code>drawRadial</code> draws a radial line, given its angle (in degrees), its start radius and its end radius:</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+    name: "diskRadial1",
+    defaultStyles: {
+      "stroke-width": "2px"
+    }
+  }).drawRadial(0, 0, 1)
+  .drawRadial(30, 0, 1)
+  .drawRadial(60, 0, 1)
+  .drawRadial(90, 0, 1)
+  .drawRadial(180, 0.2, 0.9)
+  .drawRadial(250, 0.3, 0.8, {
+    stroke: "green",
+    "stroke-width": "10px"
+  })
+  .drawRadial(270, 0.7, 0.2);</code></pre>
+        <p id="diskRadial1"></p>
+        <p>Note that arcs use the <code>stroke</code> and <code>stroke-width</code> styles, but the <code>fill</code> style has no effect on them.</p>
+        <p>The final call illustrates that the order of the two radius arguments doesn't actually matter.</p>
+        <p>So we can draw some nice effects:</p>
+        <pre><code>var radial2 = d3_gauge_plus.disk.createDisk({
+    name: "diskRadial2"
+  });
+for (var i=1; i <= 80; i++) {
+  var frac = i/80,
+    color = Math.floor(255 * (1-frac));
+  radial2.drawRadial(360 * 3 * frac, 0.68 * frac, 0.9 * frac, {
+    stroke: "rgb(255," + color + "," + color + ")"
+  });
+}</code></pre>
+        <p id="diskRadial2"></p>
+        <p>(This example also illustrates that angles outside the range 0-360 can be specified, and will be handled correctly - this is true whenever you specify an angle.)</p>
+
+      </section>
+
+
+
+      <section>
+
+        <h1>Arcs</h1>
+        <p><code>drawArc</code> draws an arc between two angles and two radii:</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+    name: "diskArc1",
+}).drawArc(0, 90, 0.5, 0.6)
+  .drawArc(180, 270, 0, 1, {
+    fill: "yellow",
+    stroke: "red",
+    "stroke-width": "0.5px"
+  })
+  .drawArc(135, 225, 0.3, 0.8, {
+    fill: "none"
+  })
+  .drawArc(330, 290, 1.2, 0.8, {
+    fill: "red",
+    stroke: "none"
+  })
+  .drawArc(300, 320, 0.6, 1, {
+    fill: "rgba(0, 0, 255, 0.5)"
+  });</code></pre>
+        <p id="diskArc1"></p>
+        <p>This example demonstrates that:</p>
+        <ul>
+          <li>Arcs respond to all three of <code>fill</code>, <code>stroke</code>, and <code>stroke-width</code>.</li>
+          <li>The order of angles doesn't matter.</li>
+          <li>The order of radii doesn't matter.</li>
+          <li>Colors can contain alpha components, as in <code>fill: "rgba(0, 0, 255, 0.5)"</code> - of course.</li>
+        </ul>
+
+      </section>
+
+
+
+      <section>
+
+        <h1>Text</h1>
+        <p><code>drawText</code> draws some text at some position, possibly rotated; as with all non-angular distances (ok, except <code>stroke-width</code>), you specify the font size as a fraction of the disk's radius.</p>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+    name: "diskText1",
+    defaultStyles: {
+      "font-family": "Helvetica, Arial"
+    }
+  }).drawText(45, 0.8, 0, 0.3, "hello")
+    .drawText(235, 0.5, 85, 0.4, "world", {
+      "font-family": "Courier New"
+      "fill": "red"
+    });</code></pre>
+        <p id="diskText1"></p>
+        <p>So the first <code>drawText</code> call draws the text "hello" at angle 45, radial distance 0.8, with 0 rotation and a font size 30% of the disk's radius; and the second call draws "world" at 330 degrees, radial distance 0.5, rotated by 85 degrees, font size 40% of the disk's radius, in a different font and in red.</p>
+        <p>Here we see the <code>font-family</code> style in use for the first time.  The default is <code>sans-serif</code> which of course could vary wildly between browsers, so you probably want to specify a per-disk default it if you're drawing any text - as we've done here.</p>
+        <p>The <code>stroke</code> and <code>stroke-width</code> styles have no effect on text.</p>
+
+        <p>The polar co-ordinate of the text object corresponds to the middle of its baseline (whatever its rotation); this is illustrated in the next two examples.</p>
+
+        <pre><code>var diskText2 = d3_gauge_plus.disk.createDisk({
+    name: "diskText2",
+    radius: 150
+  });
+for (var angle=0; angle < 360; angle += 45) {
+  diskText2.drawText(angle, 0.75, angle, 0.2, "" + angle);
+  diskText2.drawRadial(angle, 0.2, 0.75, {
+    "stroke-width": "0.5px"
+  });
+};</code></pre>
+        <p id="diskText2"></p>
+        <p>Here we've rotated each text object by the angle it's drawn at, and drawn a radial line from the centre of the disk to the text object's co-ordinate - as you can see, it's at the centre of the baseline for each text object.</p>
+        <p>It turns out to be the same if you don't rotate the text (though it looks messier):</p>
+        <p id="diskText3"></p>
+        <p>(The code for this example is the same as the above except that the rotation angle in each <code>drawText</code> call is 0, rather than <code>angle</code>.)</p>
+
+      </section>
+
+
+
+      <section>
+
+        <h1>Putting it all together</h1>
+        <pre><code>d3_gauge_plus.disk.createDisk({
+    name: "diskCombined",
+    radius: 200,
+    defaultStyles: {
+      fill: "blue",
+      "font-family": "Georgia",
+      "stroke-width": "3px"
+    }
+  }).drawCircle(0.98, { fill: "#ccc" })
+    .drawCircle(0.85, { fill: "#fff",
+                        stroke: "#ccc",
+                        "stroke-width": "0.5px"})
+    .drawArc(0, 90, 0.65, 0.85)
+    .drawText(200, 0.8, 0, 0.1, "Peekaboo")
+    .drawArc(180, 280, 0.75, 0.9, { stroke: "yellow",
+                                    "stroke-width": "2.5px",
+                                    fill: "rgba(255, 0, 255, 0.3)"
+                                  })
+    .drawCircle(0.15, { fill: "red" })
+    .drawRadial(45, 0.4, 0.7, { "stroke-width": "5px" })
+    .drawRadial(55, 0.4, 0.7, { "stroke-width": "8px" })
+    .drawRadial(305, 0.4, 0.7, { "stroke": "red" })
+    .drawRadial(315, 0.4, 0.7)
+    .drawArc(115, 245, 0.55, 0.65, { fill: "green" })
+    .drawText(45, 1.1, 45, 0.15, "Disks!");</code></pre>
+        <p id="diskCombined"></p>
+
+      </section>
+
+
 
     <div>
   </body>

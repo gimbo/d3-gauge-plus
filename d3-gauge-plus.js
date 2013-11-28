@@ -15,13 +15,14 @@ var d3_gauge_plus = (function() {
     var diskProto = {
 
       name: "defaultDisk",
-      radius: 200,
+      radius: 100,
       classes: "disk",
 
       defaultStyles: {
         "fill": "#000",
         "stroke": "#000",
-        "stroke-width": "1px"
+        "stroke-width": "1px",
+        "font-family": "sans-serif"
       },
 
       degreesToRadians: function degreesToRadians(degrees) {
@@ -65,6 +66,8 @@ var d3_gauge_plus = (function() {
        *     e.g. "#000".
        * @param {String} [overrides.stroke-width] A stroke width,
        *     e.g. "1px".
+       * @param {String} [overrides.font-family] A font family,
+       *     e.g. "Courier New".
        */
       setStyles: function setStyles(target, styles, overrides) {
         var useStyles = _.merge({}, this.defaultStyles, overrides);
@@ -98,36 +101,6 @@ var d3_gauge_plus = (function() {
       },
 
       /**
-       * Draw an arc.
-       * @param {Number} startAngle Start angle of arc, in degrees.
-       * @param {Number} endAngle End angle of arc, in degrees.
-       * @param {Number} innerRadius Inner radius of arc, as a
-       *     proportion of the disk's radius (i.e. a number between 0
-       *     and 1).
-       * @param {Number} outerRadius Outer radius of arc, as a
-       *     proportion of the disk's radius (i.e. a number between 0
-       *     and 1).
-       * @param {Object} [styles] Overrides of the disk's default styles for
-       *     drawing.
-       * @param {String} [styles.fillColor] The arc's colour, e.g. "#000".
-       */
-      drawArc: function drawArc(startAngle, endAngle, innerRadius,
-        outerRadius, styles) {
-        var self = this,
-          arc = this.body.append("svg:path");
-        this.setStyles(arc, ["fill"], styles);
-        arc.attr("d", d3.svg.arc()
-              .startAngle(this.degreesToRadians(startAngle))
-              .endAngle(this.degreesToRadians(endAngle))
-              .innerRadius(innerRadius * this.radius)
-              .outerRadius(outerRadius * this.radius))
-          .attr("transform", function() {
-            return "translate(" + self.radius + ", " + self.radius + ")";
-          });
-        return this;
-      },
-
-      /**
        * Draw a radial line.
        * @param {Number} angle Angle at which to draw radial, in
        *     degrees.
@@ -139,9 +112,9 @@ var d3_gauge_plus = (function() {
        *     and 1).
        * @param {Object} [styles] Overrides of the disk's default styles for
        *     drawing.
-       * @param {String} [styles.strokeColor] The arc's stroke colour,
+       * @param {String} [styles.stroke] The radial's stroke colour,
        *     e.g. "#000".
-       * @param {String} [styles.strokeWidth] The arc's stroke width,
+       * @param {String} [styles.stroke-width] The radial's stroke width,
        *     e.g. "1px".
        */
       drawRadial: function drawRadial(angle, innerRadius, outerRadius, styles) {
@@ -153,6 +126,40 @@ var d3_gauge_plus = (function() {
               .attr("x2", end.x)
               .attr("y2", end.y);
         this.setStyles(radial, ["stroke", "stroke-width"], styles);
+        return this;
+      },
+
+      /**
+       * Draw an arc.
+       * @param {Number} startAngle Start angle of arc, in degrees.
+       * @param {Number} endAngle End angle of arc, in degrees.
+       * @param {Number} innerRadius Inner radius of arc, as a
+       *     proportion of the disk's radius (i.e. a number between 0
+       *     and 1).
+       * @param {Number} outerRadius Outer radius of arc, as a
+       *     proportion of the disk's radius (i.e. a number between 0
+       *     and 1).
+       * @param {Object} [styles] Overrides of the disk's default styles for
+       *     drawing.
+       * @param {String} [styles.fill] The arc's colour, e.g. "#000".
+       * @param {String} [styles.stroke] The arc's stroke colour,
+       *     e.g. "#000".
+       * @param {String} [styles.stroke-width] The arc's stroke width,
+       *     e.g. "1px".
+       */
+      drawArc: function drawArc(startAngle, endAngle, innerRadius,
+        outerRadius, styles) {
+        var self = this,
+          arc = this.body.append("svg:path");
+        this.setStyles(arc, ["fill", "stroke", "stroke-width"], styles);
+        arc.attr("d", d3.svg.arc()
+              .startAngle(this.degreesToRadians(startAngle))
+              .endAngle(this.degreesToRadians(endAngle))
+              .innerRadius(innerRadius * this.radius)
+              .outerRadius(outerRadius * this.radius))
+          .attr("transform", function() {
+            return "translate(" + self.radius + ", " + self.radius + ")";
+          });
         return this;
       },
 
@@ -170,8 +177,10 @@ var d3_gauge_plus = (function() {
        * @param {String} text The text to draw.
        * @param {Object} [styles] Overrides of the disk's default
        *     styles for drawing.
-       * @param {String} [styles.fillColor] The text's fill colour,
+       * @param {String} [styles.fill] The text's fill colour,
        *     e.g. "#000".
+       * @param {String} [styles.font-family] The text's font family,
+       *     e.g. "Courier New".
        */
       drawText: function drawText(angle, radius, rotation, fontSize, text,
         styles) {
@@ -186,7 +195,7 @@ var d3_gauge_plus = (function() {
               .attr("text-anchor", "middle")
               .text(text)
               .style("font-size", size + "px");
-        this.setStyles(tsvg, ["fill"], styles);
+        this.setStyles(tsvg, ["fill", "font-family"], styles);
         tsvg.attr("transform", function() {
           return "rotate(" + rotation + "," + loc.x + "," + loc.y + ")";
         });
