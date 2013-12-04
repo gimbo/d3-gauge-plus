@@ -193,6 +193,7 @@ var d3_gauge_plus = (function() {
               .attr("y", loc.y) // this.config.cy / 2 + fontSize / 2)
               .attr("dy", 0) // dy) // fontSize / 2)
               .attr("text-anchor", "middle")
+              .style("dominant-baseline", "central")
               .text(text)
               .style("font-size", size + "px");
         this.setStyles(tsvg, ["fill", "font-family"], styles);

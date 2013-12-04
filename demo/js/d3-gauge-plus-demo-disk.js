@@ -13,6 +13,16 @@ var d3_gauge_plus_demo_disk = (function() {
 
 
     d3_gauge_plus.disk.createDisk({
+      name: "diskScratch",
+      radius: 200
+    }).drawCircle(0.5, { fill: "white" })
+      .drawCircle(0.2, { fill: "white" })
+      .drawText(0, 0, 0, 0.2, "X")
+      .drawText(90, 0.5, 90, 0.2, "X");
+
+
+
+    d3_gauge_plus.disk.createDisk({
         name: "diskEmpty"
       });
 
@@ -90,7 +100,7 @@ var d3_gauge_plus_demo_disk = (function() {
 
 
     d3_gauge_plus.disk.createDisk({
-        name: "diskArc1",
+        name: "diskArc1"
     }).drawArc(0, 90, 0.5, 0.6)
       .drawArc(180, 270, 0, 1, {
         fill: "yellow",
@@ -109,6 +119,17 @@ var d3_gauge_plus_demo_disk = (function() {
       });
 
 
+
+    d3_gauge_plus.disk.createDisk({
+      name: "diskTextCentering",
+      radius: 150,
+      defaultStyles: {
+        "font-family": "Helvetica, Arial"
+      }
+    }).drawCircle(0.8, { fill: "white" })
+      .drawCircle(0.2, { fill: "white" })
+      .drawText(0, 0, 0, 0.4, "X")
+      .drawText(90, 0.8, 90, 0.4, "X");
 
     d3_gauge_plus.disk.createDisk({
         name: "diskText1",
