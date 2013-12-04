@@ -395,7 +395,8 @@ var d3_gauge_plus = (function() {
       var majorDelta,
         minorDelta,
         major,
-        minor;
+        minor,
+        majorDegrees;
       // Render major ticks.
       if (this.config.majorTicks <= 0) {
         return;
@@ -405,21 +406,27 @@ var d3_gauge_plus = (function() {
         // Render minor ticks.
         minorDelta = majorDelta / this.config.minorTicks;
         for (minor = major + minorDelta; minor < Math.min(major + majorDelta, this.config.max); minor += minorDelta) {
-          this.drawLine(this.valueToPoint(minor, 0.75),
-                        this.valueToPoint(minor, 0.85),
-                        this.config.minorTickColor,
-                        this.config.minorTickWidth);
+          this.disk.drawRadial(this.valueToDegrees(minor), 0.75, 0.85, {
+            stroke: this.config.minorTickColor,
+            "stroke-width": this.config.minorTickWidth
+          });
         }
-        this.drawLine(this.valueToPoint(major, 0.7),
-                      this.valueToPoint(major, 0.85),
-                      this.config.majorTickColor,
-                      this.config.majorTickWidth);
+        majorDegrees = this.valueToDegrees(major);
+        this.disk.drawRadial(majorDegrees, 0.7, 0.85, {
+          stroke: this.config.majorTickColor,
+          "stroke-width": this.config.majorTickWidth
+        });
 
         // Render numbers.
-        this.drawText(this.valueToPoint(major, 0.58),
-                      parseFloat(major.toFixed(2)),
-                      Math.round(this.config.size / 20),
-                      this.config.majorTickColor);
+        var fontSize = 0.1;
+        var majorText = parseFloat(major.toFixed(2));
+        this.disk.drawText(majorDegrees, 0.58, 0, fontSize, majorText, {
+          fill: this.config.majorTickColor
+        });
+        // this.drawText(this.valueToPoint(major, 0.58),
+        //               parseFloat(major.toFixed(2)),
+        //               Math.round(this.config.size / 20),
+        //               this.config.majorTickColor);
       }
     };
 
