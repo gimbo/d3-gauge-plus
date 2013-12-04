@@ -376,20 +376,12 @@ var d3_gauge_plus = (function() {
     };
 
     this.drawBand = function(start, end, color) {
-      if (0 >= end - start) {
-        return;
-      }
-      this.disk.body.append("svg:path")
-          .style("fill", color)
-          .attr("class", "gaugeBand")
-          .attr("d", d3.svg.arc()
-              .startAngle(this.valueToRadians(start))
-              .endAngle(this.valueToRadians(end))
-              .innerRadius(0.65 * this.config.radius)
-              .outerRadius(0.85 * this.config.radius))
-          .attr("transform", function() {
-            return "translate(" + self.config.cx + ", " + self.config.cy + ")";
-          });
+      var startDegrees = this.valueToDegrees(start),
+        endDegrees = this.valueToDegrees(end);
+      this.disk.drawArc(startDegrees, endDegrees, 0.65, 0.85, {
+        fill: color,
+        stroke: "none"
+      });
     };
 
     this.renderTicks = function() {
@@ -424,10 +416,6 @@ var d3_gauge_plus = (function() {
         this.disk.drawText(majorDegrees, 0.58, 0, fontSize, majorText, {
           fill: this.config.majorTickColor
         });
-        // this.drawText(this.valueToPoint(major, 0.58),
-        //               parseFloat(major.toFixed(2)),
-        //               Math.round(this.config.size / 20),
-        //               this.config.majorTickColor);
       }
     };
 
@@ -580,28 +568,6 @@ var d3_gauge_plus = (function() {
 
 
     // Drawing utilities.
-
-    this.drawLine = function(point1, point2, color, width) {
-      this.disk.body.append("svg:line")
-          .attr("x1", point1.x)
-          .attr("y1", point1.y)
-          .attr("x2", point2.x)
-          .attr("y2", point2.y)
-          .style("stroke", color)
-          .style("stroke-width", width);
-    };
-
-    this.drawText = function(point, text, fontSize, color) {
-      this.disk.body.append("svg:text")
-          .attr("x", point.x)
-          .attr("y", point.y)
-          .attr("dy", fontSize / 3)
-          .attr("text-anchor", "middle")
-        .text(text)
-          .style("font-size", fontSize + "px")
-          .style("fill", color)
-          .style("stroke-width", "0px");
-    };
 
     this.rotateElement = function(element, fromAngle, toAngle, centre_x, centre_y, duration) {
       element.transition()
