@@ -337,7 +337,7 @@ var d3_gauge_plus = (function() {
           fill: this.config.outerFillColor,
           stroke: this.config.outerStrokeColor,
           "stroke-width": "0.5px"
-          });
+        });
       }
 
       // Inner circle
@@ -345,11 +345,10 @@ var d3_gauge_plus = (function() {
         fill: this.config.innerFillColor,
         stroke: this.config.innerStrokeColor,
         "stroke-width": "0.5px"
-        });
+      });
     };
 
     this.renderLabel = function() {
-      var fontSize;
       if (undefined !== this.config.label) {
         this.disk.drawText(0, 0.3, 0, this.config.labelSize, this.config.label, {
           fill: this.config.labelColor
@@ -389,7 +388,9 @@ var d3_gauge_plus = (function() {
         minorDelta,
         major,
         minor,
-        majorDegrees;
+        majorDegrees,
+        majorText,
+        fontSize = 0.1; // XXX
       // Render major ticks.
       if (this.config.majorTicks <= 0) {
         return;
@@ -411,8 +412,7 @@ var d3_gauge_plus = (function() {
         });
 
         // Render numbers.
-        var fontSize = 0.1;
-        var majorText = parseFloat(major.toFixed(2));
+        majorText = parseFloat(major.toFixed(2));
         this.disk.drawText(majorDegrees, 0.58, 0, fontSize, majorText, {
           fill: this.config.majorTickColor
         });
