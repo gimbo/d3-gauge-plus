@@ -25,7 +25,7 @@ var d3_gauge_plus_demo = (function() {
       innerStrokeColor: "#fff",
 
       label: "demo",
-      labelSize: 1.2,
+      labelSize: 0.2,
       labelColor: "#CCC",
 
       min: minValue,

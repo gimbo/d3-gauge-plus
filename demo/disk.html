@@ -22,6 +22,9 @@
 
       <section>
 
+        <!-- <h1>Scratch pad</h1> -->
+        <!-- <p id="diskScratch"></p> -->
+
         <h1>Introduction</h1>
         <p>A disk object as returned by <code>d3_gauge_plus.disk.createDisk</code> provides a space into which you can conveniently draw certain primitives using polar co-ordinates.  Specifically, we have:</p>
         <ul>
@@ -59,7 +62,7 @@
   radius: 50
 });</code></pre>
         <p id="diskEmptyRadius50"></p>
-        <p>(In all of these examples, target DOM element happens to be a <code>p</code> - but of course it could be anything we can attach a child element to.)</p>
+        <p>(In all of these examples, the target DOM element happens to be a <code>p</code> - but of course it could be anything we can attach a child element to.)</p>
         <p>So far, so boring.  Let's draw something...</p>
 
       </section>
@@ -220,22 +223,37 @@ for (var i=1; i <= 80; i++) {
         <p>Here we see the <code>font-family</code> style in use for the first time.  The default is <code>sans-serif</code> which of course could vary wildly between browsers, so you probably want to specify a per-disk default it if you're drawing any text - as we've done here.</p>
         <p>The <code>stroke</code> and <code>stroke-width</code> styles have no effect on text.</p>
 
-        <p>The polar co-ordinate of the text object corresponds to the middle of its baseline (whatever its rotation); this is illustrated in the next two examples.</p>
+        <p>The SVG <code>text</code> element is centred on the specified polar co-ordinate using the <code>text-anchor</code> and <code>dominant-baseline</code> attributes.  Unfortunately, the latter doesn't seem to work in IE, in which case the text is horizontally centred but not vertically centred.  To be explicit: in Chrome, Firefox and Safari, text is absolutely centred on the specified position; in IE, the specified position is at the centre of the text's baseline (i.e. along its bottom).  This is illustrated in the next three examples.</p>
 
-        <pre><code>var diskText2 = d3_gauge_plus.disk.createDisk({
-    name: "diskText2",
+        <p>In the next example we have two X's.  The first is at the disk's centre; the other should have a circle running through its centre (but won't in IE).</p>
+
+        <pre><code>d3_gauge_plus.disk.createDisk({
+  name: "diskText2",
+  radius: 150,
+  defaultStyles: {
+    "font-family": "Helvetica, Arial"
+  }
+}).drawCircle(0.8, { fill: "white" })
+  .drawCircle(0.2, { fill: "white" })
+  .drawText(0, 0, 0, 0.4, "X")
+  .drawText(90, 0.8, 90, 0.4, "X");</code></pre>
+
+        <p id="diskText2"></p>
+
+        <p>In the next two examples we draw lines from the centre to the text's co-ordinate...</p>
+
+        <pre><code>var diskText3 = d3_gauge_plus.disk.createDisk({
+    name: "diskText3",
     radius: 150
   });
 for (var angle=0; angle < 360; angle += 45) {
-  diskText2.drawText(angle, 0.75, angle, 0.2, "" + angle);
-  diskText2.drawRadial(angle, 0.2, 0.75, {
-    "stroke-width": "0.5px"
-  });
-};</code></pre>
-        <p id="diskText2"></p>
-        <p>Here we've rotated each text object by the angle it's drawn at, and drawn a radial line from the centre of the disk to the text object's co-ordinate - as you can see, it's at the centre of the baseline for each text object.</p>
-        <p>It turns out to be the same if you don't rotate the text (though it looks messier):</p>
+  diskText3.drawText(angle, 0.75, angle, 0.2, "" + angle);
+  diskText3.drawRadial(angle, 0.2, 0.75, { "stroke-width": "0.5px" });
+}</code></pre>
         <p id="diskText3"></p>
+        <p>Here we've rotated each text object by the angle it's drawn at, and drawn a radial line from the centre of the disk to the text object's co-ordinate - as you can see, it's at the centre of the baseline for each text object.</p>
+        <p>And with text rotated (which looks much messier in IE because the vertical centering is wrong)...</p>
+        <p id="diskText4"></p>
         <p>(The code for this example is the same as the above except that the rotation angle in each <code>drawText</code> call is 0, rather than <code>angle</code>.)</p>
 
       </section>
