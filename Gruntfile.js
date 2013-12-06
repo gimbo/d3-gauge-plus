@@ -5,21 +5,39 @@ module.exports = function(grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
+    browserify: {
+      dist: {
+        files: {
+          'd3-gauge-plus.js': ['lib/d3-gauge-plus.js']
+        }
+      }
+    },
+
     jshint: {
-      all: ['d3-gauge-plus.js', 'demo/js/d3-gauge*.js']
+      all: [
+        'lib/d3-gauge-plus.js',
+        'lib/disk.js',
+        'lib/gauge.js',
+        'demo/js/d3-gauge*.js'
+      ]
     },
 
     jslint: {
-      src: ['d3-gauge-plus.js', 'demo/js/d3-gauge*.js']
+      src: [
+        'lib/d3-gauge-plus.js',
+        'lib/disk.js',
+        'lib/gauge.js',
+        'demo/js/d3-gauge*.js'
+      ]
     }
 
   });
 
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-
   grunt.loadNpmTasks('grunt-jslint');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'jslint']);
+  grunt.registerTask('default', ['browserify', 'jshint', 'jslint']);
 
 };
