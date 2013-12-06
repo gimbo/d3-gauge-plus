@@ -8,7 +8,7 @@ module.exports = function(grunt) {
     browserify: {
       dist: {
         files: {
-          'd3-gauge-plus.js': ['lib/d3-gauge-plus.js']
+          'd3-gauge-plus.js': ['lib/main.js']
         }
       }
     },

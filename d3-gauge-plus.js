@@ -4,29 +4,6 @@
 /*jslint nomen: true*/
 /*jslint white: true */
 
-/*global window */
-
-"use strict";
-
-var d3_gauge_plus = (function() {
-  var gauge = require('./gauge.js'),
-    disk = require('./disk.js');
-  return {
-    Gauge: gauge.Gauge,
-    disk: disk
-  };
-}());
-
-if (window !== undefined) {
-  window.d3_gauge_plus = d3_gauge_plus;
-}
-
-},{"./disk.js":2,"./gauge.js":3}],2:[function(require,module,exports){
-/*jslint indent: 2 */
-/*jslint node: true */
-/*jslint nomen: true*/
-/*jslint white: true */
-
 /*global d3 */
 
 // A context for drawing into SVG using polar co-ordinates.
@@ -239,7 +216,7 @@ exports.createDisk = function(config) {
   return newDisk;
 };
 
-},{"./lodash-2.4.0.min.js":4}],3:[function(require,module,exports){
+},{"./lodash-2.4.0.min.js":3}],2:[function(require,module,exports){
 /*jslint indent: 2 */
 /*jslint node: true */
 /*jslint nomen: true*/
@@ -618,7 +595,7 @@ function Gauge(gaugeName, configuration) {
 
 exports.Gauge = Gauge;
 
-},{"./disk.js":2}],4:[function(require,module,exports){
+},{"./disk.js":1}],3:[function(require,module,exports){
 var global=typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {};/**
  * @license
  * Lo-Dash 2.4.0 (Custom Build) lodash.com/license | Underscore.js 1.5.2 underscorejs.org/LICENSE
@@ -674,5 +651,28 @@ for(t=Q.createCallback(t,e,3);r--;)if(t(n[r],r,n))return r;return-1},Q.findLastK
 return n?new X(e,n):e}}),St(["push","reverse","sort","unshift"],function(n){var t=ae[n];Q.prototype[n]=function(){return t.apply(this.__wrapped__,arguments),this}}),St(["concat","slice","splice"],function(n){var t=ae[n];Q.prototype[n]=function(){return new X(t.apply(this.__wrapped__,arguments),this.__chain__)}}),Q}var v,h=[],g=[],y=0,m=+new Date+"",b=75,_=40,d=" \t\x0B\f\xa0\ufeff\n\r\u2028\u2029\u1680\u180e\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000",w=/\b__p\+='';/g,j=/\b(__p\+=)''\+/g,k=/(__e\(.*?\)|\b__t\))\+'';/g,x=/\$\{([^\\}]*(?:\\.[^\\}]*)*)\}/g,C=/\w*$/,O=/^\s*function[ \n\r\t]+\w/,N=/<%=([\s\S]+?)%>/g,I=RegExp("^["+d+"]*0+(?=.$)"),S=/($^)/,E=/\bthis\b/,R=/['\n\r\t\u2028\u2029\\]/g,A="Array Boolean Date Function Math Number Object RegExp String _ attachEvent clearTimeout isFinite isNaN parseInt setTimeout".split(" "),D="[object Arguments]",$="[object Array]",T="[object Boolean]",F="[object Date]",B="[object Function]",W="[object Number]",q="[object Object]",z="[object RegExp]",P="[object String]",K={};
 K[B]=false,K[D]=K[$]=K[T]=K[F]=K[W]=K[q]=K[z]=K[P]=true;var L={leading:false,maxWait:0,trailing:false},M={configurable:false,enumerable:false,value:null,writable:false},V={"boolean":false,"function":true,object:true,number:false,string:false,undefined:false},U={"\\":"\\","'":"'","\n":"n","\r":"r","\t":"t","\u2028":"u2028","\u2029":"u2029"},G=V[typeof window]&&window||this,H=V[typeof exports]&&exports&&!exports.nodeType&&exports,J=V[typeof module]&&module&&!module.nodeType&&module,Q=J&&J.exports===H&&H,X=V[typeof global]&&global;!X||X.global!==X&&X.window!==X||(G=X);
 var Y=s();typeof define=="function"&&typeof define.amd=="object"&&define.amd?(G._=Y, define(function(){return Y})):H&&J?Q?(J.exports=Y)._=Y:H._=Y:G._=Y}).call(this);
-},{}]},{},[1])
+},{}],4:[function(require,module,exports){
+/*jslint indent: 2 */
+/*jslint node: true */
+/*jslint nomen: true*/
+/*jslint white: true */
+
+/*global window */
+
+"use strict";
+
+var d3_gauge_plus = (function() {
+  var gauge = require('./gauge.js'),
+    disk = require('./disk.js');
+  return {
+    Gauge: gauge.Gauge,
+    disk: disk
+  };
+}());
+
+if (window !== undefined) {
+  window.d3_gauge_plus = d3_gauge_plus;
+}
+
+},{"./disk.js":1,"./gauge.js":2}]},{},[4])
 ;
