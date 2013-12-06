@@ -6,7 +6,9 @@
     "grunt-contrib-jshint": "~0.7.2",
     "grunt-jslint": "~1.1.2",
     "browserify": "~2.36.1",
-    "grunt-browserify": "~1.2.11"
+    "grunt-browserify": "~1.2.11",
+    "grunt-contrib-watch": "~0.5.3",
+    "uglifyify": "~1.0.1"
   },
   "repository": {
     "type": "git",

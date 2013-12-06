@@ -16,6 +16,9 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'd3-gauge-plus.js': ['lib/main.js']
+        },
+        options: {
+          transform: ['uglifyify']
         }
       }
     },
@@ -26,12 +29,20 @@ module.exports = function(grunt) {
 
     jslint: {
       src: toLint
+    },
+
+    watch: {
+      js: {
+        files: ['lib/*.js'],
+        tasks: ['browserify', 'jshint', 'jslint']
+      }
     }
 
   });
 
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-watch')
   grunt.loadNpmTasks('grunt-jslint');
 
   // Default task(s).
