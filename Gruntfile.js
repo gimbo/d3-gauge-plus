@@ -1,5 +1,12 @@
 module.exports = function(grunt) {
 
+  var toLint = [
+    'lib/main.js',
+    'lib/disk.js',
+    'lib/gauge.js',
+    'demo/js/d3-gauge*.js'
+    ];
+
   // Project configuration.
   grunt.initConfig({
 
@@ -14,21 +21,11 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      all: [
-        'lib/d3-gauge-plus.js',
-        'lib/disk.js',
-        'lib/gauge.js',
-        'demo/js/d3-gauge*.js'
-      ]
+      all: toLint
     },
 
     jslint: {
-      src: [
-        'lib/d3-gauge-plus.js',
-        'lib/disk.js',
-        'lib/gauge.js',
-        'demo/js/d3-gauge*.js'
-      ]
+      src: toLint
     }
 
   });
