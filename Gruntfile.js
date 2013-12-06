@@ -16,6 +16,9 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'd3-gauge-plus.js': ['lib/main.js']
+        },
+        options: {
+          transform: ['uglifyify']
         }
       }
     },
