@@ -1,6 +1,12 @@
+/*jslint node: true */
+/*jslint white: true */
+
+"use strict";
+
 module.exports = function(grunt) {
 
   var toLint = [
+    'Gruntfile.js',
     'lib/main.js',
     'lib/disk.js',
     'lib/gauge.js',
@@ -42,7 +48,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-jslint');
 
   // Default task(s).
