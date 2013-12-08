@@ -21,7 +21,7 @@ module.exports = function(grunt) {
     browserify: {
       dist: {
         files: {
-          'd3-gauge-plus.js': ['lib/main.js']
+          'dist/d3-gauge-plus.js': ['lib/main.js']
         }
       }
     },
@@ -37,7 +37,7 @@ module.exports = function(grunt) {
     uglify: {
       d3_gauge_plus_min: {
         files: {
-          'd3-gauge-plus.min.js': ['d3-gauge-plus.js']
+          'dist/d3-gauge-plus.min.js': ['dist/d3-gauge-plus.js']
         }
       }
     },
