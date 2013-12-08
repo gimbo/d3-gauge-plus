@@ -6,7 +6,7 @@ This is a fork of Tomer Doron's [gauge.js](https://gist.github.com/tomerd/149927
 
 ## Using `d3-gauge-plus.js`
 
-If you just want to use the module to create gauges, you can grab the [`d3-gauge-plus.js` from the top level of this repository](https://github.com/gimbo/d3-gauge-plus/blob/master/d3-gauge-plus.js) and include it in your projects.  See the [demos page](http://gimbo.github.io/d3-gauge-plus/demo/) (and [accompanying source](https://github.com/gimbo/d3-gauge-plus/tree/master/demo) in the repository) for more information.
+If you just want to use the module to create gauges, you can grab the [`d3-gauge-plus.js` from the top level of this repository](https://github.com/gimbo/d3-gauge-plus/blob/master/d3-gauge-plus.js) (or if you prefer, [the minified version](https://github.com/gimbo/d3-gauge-plus/blob/master/d3-gauge-plus.min.js)) and include it in your projects.  See the [demos page](http://gimbo.github.io/d3-gauge-plus/demo/) (and [accompanying source](https://github.com/gimbo/d3-gauge-plus/tree/master/demo) in the repository) for more information.
 
 ## Building `d3-gauge-plus.js`
 
