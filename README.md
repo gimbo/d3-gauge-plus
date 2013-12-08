@@ -6,8 +6,22 @@ This is a fork of Tomer Doron's [gauge.js](https://gist.github.com/tomerd/149927
 
 ## Using `d3-gauge-plus.js`
 
-If you just want to use the module to create gauges, you can grab the [`d3-gauge-plus.js` from the top level of this repository](https://github.com/gimbo/d3-gauge-plus/blob/master/d3-gauge-plus.js) and include it in your projects.  See the [demos page](http://gimbo.github.io/d3-gauge-plus/demo/) (and [accompanying source](https://github.com/gimbo/d3-gauge-plus/tree/master/demo) in the repository) for more information.
+If you just want to use the module to create gauges, you can grab the file [`d3-gauge-plus.js`](https://github.com/gimbo/d3-gauge-plus/blob/master/dist/d3-gauge-plus.js) from the [`dist`](https://github.com/gimbo/d3-gauge-plus/tree/master/dist) folder in this repository (or if you prefer, [the minified version](https://github.com/gimbo/d3-gauge-plus/blob/master/dist/d3-gauge-plus.min.js)) and include it in your projects.  See the [demos page](http://gimbo.github.io/d3-gauge-plus/demo/) (and [accompanying source](https://github.com/gimbo/d3-gauge-plus/tree/master/demo) in the repository) for more information.
 
 ## Building `d3-gauge-plus.js`
 
-If you want to modify the code, you'll need to rebuild it from its constituent parts.  The relevant modules are in the [lib](https://github.com/gimbo/d3-gauge-plus/tree/master/lib) folder; they are compiled into the top-level `d3-gauge-plus.js` library using [browserify](http://browserify.org/) under the control of [grunt](http://gruntjs.com/) - see [Gruntfile.js](https://github.com/gimbo/d3-gauge-plus/blob/master/Gruntfile.js).
+If you want to modify the library, you'll need to rebuild it from its constituent parts.  We use [grunt](http://gruntjs.com/) to compile the sources (which are in [lib](https://github.com/gimbo/d3-gauge-plus/tree/master/lib)) to the target `d3-gauge-plus.js` library using [browserify](https://npmjs.org/package/grunt-browserify), and then minify that to `d3-gauge-plus.min.js` using [uglify](https://github.com/gruntjs/grunt-contrib-uglify).
+
+To get started, you need to do two things:
+
+First, ensure you've got grunt installed.  Hopefully that's as simple as:
+
+    npm install -g grunt-cli
+
+[More detailed instructions are here](http://gruntjs.com/getting-started).
+
+Second, in the root folder of this repository, install dependencies via:
+
+    npm install
+
+Then you should be able to run `grunt` to lint/browserify/minify the sources all together.  It's all controleld by [Gruntfile.js](https://github.com/gimbo/d3-gauge-plus/blob/master/Gruntfile.js).
